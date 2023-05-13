@@ -547,10 +547,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39a7b61e65f1d3b438545b3687ba4cc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _audioDatas:
-  - _key: 0
-    _clip: {fileID: 8300000, guid: f510d2d835a0d5d4fb0332391510711f, type: 3}
-    _volume: 1
+  _audioModule:
+    _audioDatas:
+    - _key: 0
+      _clip: {fileID: 8300000, guid: f510d2d835a0d5d4fb0332391510711f, type: 3}
+      _volume: 1
 --- !u!4 &925134419
 Transform:
   m_ObjectHideFlags: 0
@@ -7323,6 +7324,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f64e509719caa0418e9e1eab037dc06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerFireBehavior:
+    _attackRate: 1
   _playerMoveBehavior:
     _speed: 5
     _runMag: 1.5

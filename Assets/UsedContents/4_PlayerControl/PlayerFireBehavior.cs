@@ -4,18 +4,40 @@ using UnityEngine;
 /// プレイヤーの攻撃に関する処理を行うクラス
 /// </summary>
 [System.Serializable]
-public class PlayerFireBehavior
+public class PlayerFireBehavior : IInputActionRegistrable
 {
+    [Header("攻撃のレート")]
+    [SerializeField] float _attackRate = 0.33f;
+
+    float _time;
     /// <summary>
-    /// InputSystemに登録して攻撃フラグを切り替えるためにSetGetどちらも公開する必要がある
+    /// InputSystemに登録して入力のオンオフで攻撃中フラグを切り替える
     /// </summary>
-    public bool IsFiring { get; set; }
+    bool _isFiring;
+
+    public void RegisterInputAction(InputActionRegister register)
+    {
+        register.OnFire += () => OpenFire();
+        register.OnFireCanceled += () => _isFiring = false;
+    }
+
+    /// <summary>
+    /// 最初の1発は射撃ボタンを押したタイミングで必ず発射される
+    /// 射撃ボタンを連打することで攻撃レート以上の早さで発射可能
+    /// </summary>
+    void OpenFire()
+    {
+        _isFiring = true;
+        _time = _attackRate;
+    }
 
     public void Update()
     {
-        if (IsFiring)
+        _time += Time.deltaTime;
+
+        if (_isFiring && _time > _attackRate)
         {
-            Debug.Log("攻撃中");
+            _time = 0;
             GameManager.Instance.AudioModule.PlaySE(AudioType.SE_Fire);
         }
     }

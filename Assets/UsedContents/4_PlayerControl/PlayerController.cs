@@ -21,13 +21,9 @@ public class PlayerController : MonoBehaviour
     void InitOnAwake()
     {
         _inputActionRegister = new InputActionRegister();
-        _inputActionRegister.OnMove += _playerMoveBehavior.UpdateVelocity;
-        _inputActionRegister.OnMoveCanceled += _playerMoveBehavior.UpdateVelocity;
-        _inputActionRegister.OnRun += () => _playerMoveBehavior.IsRunning = true;
-        _inputActionRegister.OnRunCanceled += () => _playerMoveBehavior.IsRunning = false;
-        _inputActionRegister.OnFire += () => _playerFireBehavior.IsFiring = true;
-        _inputActionRegister.OnFireCanceled += () => _playerFireBehavior.IsFiring = false;
-        _inputActionRegister.OnFocus += _playerFocusBehavior.FocusForward;
+        _playerMoveBehavior.RegisterInputAction(_inputActionRegister);
+        _playerFireBehavior.RegisterInputAction(_inputActionRegister);
+        _playerFocusBehavior.RegisterInputAction(_inputActionRegister);
 
         this.UpdateAsObservable().Subscribe(_ => 
         {

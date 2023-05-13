@@ -4,9 +4,14 @@ using UnityEngine;
 /// プレイヤーのロックオン機能の処理を行うクラス
 /// </summary>
 [System.Serializable]
-public class PlayerFocusBehavior
+public class PlayerFocusBehavior : IInputActionRegistrable
 {
-    public void FocusForward()
+    public void RegisterInputAction(InputActionRegister register)
+    {
+        register.OnFocus += FocusForward;
+    }
+
+    void FocusForward()
     {
         // 正面にSphereColliderを飛ばしてロックオンする
         Debug.Log("ロックオン");

@@ -7,9 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [Header("–Â‚ç‚µ‚½‚¢‰¹‚Ìƒf[ƒ^")]
-    [SerializeField] AudioData[] _audioDatas;
-    AudioModule _audioModule;
+    [SerializeField] AudioModule _audioModule;
 
     public AudioModule AudioModule => _audioModule;
 
@@ -18,7 +16,7 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            _audioModule = new AudioModule(gameObject, _audioDatas);
+            _audioModule.InitOnAwake(gameObject);
         }
         else
         {

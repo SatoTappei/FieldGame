@@ -11,25 +11,26 @@ public enum AudioType
 }
 
 /// <summary>
-/// インスペクターから割り当てるための音のデータのクラス
-/// </summary>
-[System.Serializable]
-public class AudioData
-{
-    [SerializeField] AudioType _key;
-    [SerializeField] AudioClip _clip;
-    [SerializeField] float _volume;
-
-    public AudioType Key => _key;
-    public AudioClip Clip => _clip;
-    public float Volume => _volume;
-}
-
-/// <summary>
 /// 音の再生を行うクラス
 /// </summary>
+[System.Serializable]
 public class AudioModule
 {
+    /// <summary>
+    /// インスペクターから割り当てるための音のデータのクラス
+    /// </summary>
+    [System.Serializable]
+    public class AudioData
+    {
+        [SerializeField] AudioType _key;
+        [SerializeField] AudioClip _clip;
+        [SerializeField] float _volume;
+
+        public AudioType Key => _key;
+        public AudioClip Clip => _clip;
+        public float Volume => _volume;
+    }
+
     /// <summary>
     /// 同時に再生できる音の数
     /// </summary>
@@ -39,19 +40,20 @@ public class AudioModule
     /// </summary>
     static readonly float Interval = 0.05f;
 
+    [SerializeField] AudioData[] _audioDatas;
+
     AudioSource[] _audioSources = new AudioSource[PlayAtSame];
     Dictionary<AudioType, AudioData> _audioDict = new();
-
     float _lastTime;
 
-    public AudioModule(GameObject gameObject, AudioData[] audioDatas)
+    public void InitOnAwake(GameObject go)
     {
         for (int i = 0; i < _audioSources.Length; i++)
         {
-            _audioSources[i] = gameObject.AddComponent<AudioSource>();
+            _audioSources[i] = go.AddComponent<AudioSource>();
         }
 
-        foreach (AudioData data in audioDatas)
+        foreach (AudioData data in _audioDatas)
         {
             _audioDict.Add(data.Key, data);
         }
