@@ -11,13 +11,17 @@ public class PlayerMoveBehavior : IInputActionRegistrable
     [SerializeField] float _speed = 5.0f;
     [Header("走る際の移動速度の倍率")]
     [SerializeField] float _runMag = 1.5f;
+    [Header("移動に応じた方向に向かせるTransform")]
+    [SerializeField] Transform _model;
+    [Header("向く速度")]
+    [SerializeField] float _rotSpeed = 20;
 
     /// <summary>
-    /// 入力に移動速度を乗算して正規化した値
+    /// 入力を進む方向(正規化済み)に変換した値
     /// </summary>
-    Vector3 _velo;
+    Vector3 _dir;
     /// <summary>
-    /// InputSystemに登録して入力のオンオフで移動中フラグを切り替える
+    /// InputSystemに登録して入力のオンオフで走り中フラグを切り替える
     /// </summary>
     bool _isRunning;
 
@@ -31,8 +35,16 @@ public class PlayerMoveBehavior : IInputActionRegistrable
 
     public void Update(Transform transform)
     {
-        float mag = _isRunning ? _runMag : 1;
-        transform.Translate(_velo * Time.deltaTime * mag);
+        // 移動
+        Vector3 movement = _dir * Time.deltaTime * _speed * (_isRunning ? _runMag : 1);
+        transform.Translate(movement);
+
+        // 移動方向に向かせる
+        if (movement != Vector3.zero)
+        {
+            Quaternion rot = Quaternion.LookRotation(_dir, Vector3.up);
+            _model.rotation = Quaternion.Lerp(_model.rotation, rot, Time.deltaTime * _rotSpeed);
+        }
     }
 
     /// <summary>
@@ -42,6 +54,6 @@ public class PlayerMoveBehavior : IInputActionRegistrable
     void UpdateVelocity(InputAction.CallbackContext context)
     {
         Vector2 value = context.ReadValue<Vector2>();
-        _velo = new Vector3(value.x, 0, value.y).normalized * _speed;
+        _dir = new Vector3(value.x, 0, value.y).normalized;
     }
 }
