@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] PlayerFireBehavior _playerFireBehavior;
     [SerializeField] PlayerMoveBehavior _playerMoveBehavior;
-    [SerializeField] PlayerFocusBehavior _playerFocusBehavior;
+    [SerializeField] CameraControlModule _cameraControlModule;
     InputActionRegister _inputActionRegister;
     Transform _transform;
 
@@ -23,12 +23,14 @@ public class PlayerController : MonoBehaviour
         _inputActionRegister = new InputActionRegister();
         _playerMoveBehavior.RegisterInputAction(_inputActionRegister);
         _playerFireBehavior.RegisterInputAction(_inputActionRegister);
-        _playerFocusBehavior.RegisterInputAction(_inputActionRegister);
+        _cameraControlModule.RegisterInputAction(_inputActionRegister);
 
         this.UpdateAsObservable().Subscribe(_ => 
         {
-            _playerMoveBehavior.Update(_transform);
+            CameraMode mode = _cameraControlModule.CurrentCameraMode;
+            _playerMoveBehavior.Update(_transform, mode);
             _playerFireBehavior.Update();
+            _cameraControlModule.Update();
         });
 
         _transform = transform;

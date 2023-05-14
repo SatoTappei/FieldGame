@@ -31,23 +31,20 @@ public class AudioModule
         public float Volume => _volume;
     }
 
-    /// <summary>
-    /// 同時に再生できる音の数
-    /// </summary>
-    static readonly int PlayAtSame = 10;
-    /// <summary>
-    /// 連続で再生できる間隔
-    /// </summary>
-    static readonly float Interval = 0.05f;
-
     [SerializeField] AudioData[] _audioDatas;
+    [Header("同時に再生できる数")]
+    [SerializeField] int _playAtSame = 10;
+    [Header("連続で再生できる間隔")]
+    [SerializeField] float _interval = 0.05f;
 
-    AudioSource[] _audioSources = new AudioSource[PlayAtSame];
+    AudioSource[] _audioSources;
     Dictionary<AudioType, AudioData> _audioDict = new();
     float _lastTime;
 
     public void InitOnAwake(GameObject go)
     {
+        _audioSources = new AudioSource[_playAtSame];
+
         for (int i = 0; i < _audioSources.Length; i++)
         {
             _audioSources[i] = go.AddComponent<AudioSource>();
@@ -79,7 +76,7 @@ public class AudioModule
 
     bool IsInterval()
     {
-        if (Time.realtimeSinceStartup - _lastTime > Interval)
+        if (Time.realtimeSinceStartup - _lastTime > _interval)
         {
             _lastTime = Time.realtimeSinceStartup;
             return false;

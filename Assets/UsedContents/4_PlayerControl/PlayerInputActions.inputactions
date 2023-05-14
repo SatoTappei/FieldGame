@@ -15,6 +15,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "CameraMove",
+                    "type": "Value",
+                    "id": "76d7a9e3-230d-4abb-a898-b5961ab81e12",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Fire",
                     "type": "Button",
                     "id": "18edf364-92ea-452d-aa14-63a71a7c5900",
@@ -84,6 +93,17 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Focus",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4400e8d4-5ad5-48e7-8b8c-edb0a6d47bb9",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "CameraMove",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
