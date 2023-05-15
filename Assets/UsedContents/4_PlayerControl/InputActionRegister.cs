@@ -21,7 +21,7 @@ public class InputActionRegister
 
     public InputActionRegister()
     {
-        _inputActions = new PlayerInputActions();
+        _inputActions = new();
         _inputActions.Enable();
         _inputActions.Player.Move.performed += context => OnMove?.Invoke(context);
         _inputActions.Player.Move.canceled += context => OnMoveCanceled?.Invoke(context);

@@ -1,20 +1,25 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
-/// プレイヤーに張り付けるだけで使えるシンプルなコントローラー
+/// プレイヤーに張り付けるだけで使用可能
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class SimplePlayerController : MonoBehaviour
 {
-    Rigidbody _rb;
-    Dictionary<(int v, int h), Vector3> _dirDict;
+    PlayerInputActions _inputActions;
     Vector3 _dir;
-    int _speed;
 
     void Awake()
     {
+        _inputActions = new();
+        _inputActions.Enable();
+        _inputActions.Player.Move.performed += OnMove;
+        _inputActions.Player.Move.canceled += OnMove;
+
+        #region 未使用: 入力に対して8方向の辞書を対応させるコード
+        Dictionary<(int v, int h), Vector3> _dirDict;
         _dirDict = new()
         {
             { (0, 0), Vector3.zero },
@@ -28,21 +33,20 @@ public class SimplePlayerController : MonoBehaviour
             { (1, -1), (Vector3.forward + Vector3.left).normalized },
             { (-1, -1), (Vector3.back + Vector3.left).normalized },
         };
-
-        _rb = GetComponent<Rigidbody>();
+        //int v = (int)Input.GetAxisRaw("Vertical");
+        //int h = (int)Input.GetAxisRaw("Horizontal");
+        //_dir = _dirDict[(v, h)];
+        #endregion
     }
 
     void Update()
     {
-        int v = (int)Input.GetAxisRaw("Vertical");
-        int h = (int)Input.GetAxisRaw("Horizontal");
-
-        _dir = _dirDict[(v, h)];
-        _speed = Input.GetKey(KeyCode.LeftShift) ? 10 : 5;
+        transform.Translate(_dir * Time.deltaTime * 5.0f);
     }
 
-    void FixedUpdate()
-    { 
-        _rb.velocity = _dir * _speed;
+    void OnMove(InputAction.CallbackContext context)
+    {
+        Vector2 value = context.ReadValue<Vector2>();
+        _dir = new Vector3(value.x, 0, value.y).normalized;
     }
 }
