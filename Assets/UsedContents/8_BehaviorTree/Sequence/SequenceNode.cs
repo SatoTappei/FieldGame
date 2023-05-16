@@ -6,10 +6,6 @@ using UnityEngine;
 /// </summary>
 public class SequenceNode : BehaviorTreeNode
 {
-    // 連続した動作が欲しいとき
-    // 走って、止まって、撃つ
-    // 全部成功したらSuccessを返す
-
     List<BehaviorTreeNode> _childList = new();
     int _currentChildIndex;
 

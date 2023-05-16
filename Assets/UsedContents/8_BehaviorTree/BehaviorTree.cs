@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using State = BehaviorTreeNode.State;
+using Rule = SelectorNode.Rule;
 
 /// <summary>
 /// BehaviorTree本体のクラス
@@ -15,9 +16,9 @@ public class BehaviorTree : MonoBehaviour
     };
     ActionState _state = ActionState.Idle;
 
-    // TODO:この地点間を行き来するようにしたい
     [SerializeField] Transform _startPoint;
     [SerializeField] Transform _item;
+    [SerializeField] Transform _item2;
 
     public RootNode _rootNode = new();
     public State _treeState = State.Runnning;
@@ -25,12 +26,21 @@ public class BehaviorTree : MonoBehaviour
 
     void Start()
     {
-        // アイテムに向かって移動した後、スタート地点まで戻るSequence
-        SequenceNode sequence = new ();
+        SequenceNode sequence = new();
+        
         LinerMoveToPosAction moveToItem = new(transform, _item.position, 10.0f);
+        WaitTimerAction waitTime = new(2.0f);
+
+        SelectorNode selector = new(Rule.Random);
+        LinerMoveToPosAction moveToItem2 = new(transform, _item2.position, 7.0f);
         LinerMoveToPosAction moveToStartPoint = new(transform, _startPoint.position, 3.0f);
+        // アイテムに向かって移動した後、一定時間待機する
         sequence.AddChild(moveToItem);
-        sequence.AddChild(moveToStartPoint);
+        sequence.AddChild(waitTime);
+        // アイテム2もしくはスタート地点に移動する
+        sequence.AddChild(selector);
+        selector.AddChild(moveToItem2);
+        selector.AddChild(moveToStartPoint);
 
         // ルートノードの子にSequenceをぶら下げる
         _rootNode._child = sequence;
