@@ -17,6 +17,7 @@ public class BehaviorTree : MonoBehaviour
     ActionState _state = ActionState.Idle;
 
     [SerializeField] Transform _startPoint;
+    [SerializeField] Transform _goalPoint;
     [SerializeField] Transform _item;
     [SerializeField] Transform _item2;
 
@@ -37,7 +38,7 @@ public class BehaviorTree : MonoBehaviour
         // アイテムに向かって移動した後、一定時間待機する
         sequence.AddChild(moveToItem);
         sequence.AddChild(waitTime);
-        // アイテム2もしくはスタート地点に移動する
+        // アイテム2もしくはゴール地点に移動する
         sequence.AddChild(selector);
         selector.AddChild(moveToItem2);
         selector.AddChild(moveToStartPoint);
