@@ -1,3 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UniRx;
+using UniRx.Triggers;
+using Cysharp.Threading.Tasks;
+
 /// <summary>
 /// BehaviorTreeで使用するノードのクラス
 /// </summary>
@@ -10,8 +17,26 @@ public abstract class BehaviorTreeNode
         Success,
     }
 
-    public State CurrentState { get; set; }
-    public bool IsActive { get; private set; }
+    /// <summary>
+    /// 衝突を検知するタグ
+    /// </summary>
+    static string HitTag = "Player";
+
+    public BehaviorTreeNode() { }
+    public BehaviorTreeNode(Collider collider)
+    {
+        // 任意のタグを持つオブジェクトとぶつかったらフラグが立つ
+        collider.OnTriggerEnterAsObservable()
+            .Where(c => c.CompareTag(HitTag))
+            .Subscribe(_ => FlagControlAsync().Forget());
+    }
+
+    State _currentState;
+    bool _isActive;
+    /// <summary>
+    /// 衝突した際に1フレームだけ立つフラグ
+    /// </summary>
+    protected bool IsTriggerEnter { get; private set; }
 
     /// <summary>
     /// TreeのクラスからUpdate()のタイミングで呼ばれるメソッド
@@ -20,24 +45,31 @@ public abstract class BehaviorTreeNode
     /// </summary>
     public State Update()
     {
-        if (!IsActive)
+        if (!_isActive)
         {
-            IsActive = true;
+            _isActive = true;
             OnEnter();
         }
 
-        CurrentState = OnStay();
+        _currentState = OnStay();
 
-        if (CurrentState == State.Failure || CurrentState == State.Success)
+        if (_currentState == State.Failure || _currentState == State.Success)
         {
             OnExit();
-            IsActive = false;
+            _isActive = false;
         }
 
-        return CurrentState;
+        return _currentState;
     }
 
     protected abstract void OnEnter();
     protected abstract State OnStay();
     protected abstract void OnExit();
+
+    async UniTaskVoid FlagControlAsync()
+    {
+        IsTriggerEnter = true;
+        await UniTask.Yield();
+        IsTriggerEnter = false;
+    }
 }

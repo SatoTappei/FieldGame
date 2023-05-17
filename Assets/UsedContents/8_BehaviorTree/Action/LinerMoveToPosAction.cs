@@ -15,7 +15,8 @@ public class LinerMoveToPosAction : BehaviorTreeNode
     Vector3 _targetPos;
     float _speed;
 
-    public LinerMoveToPosAction(Transform transform, Vector3 targetPos, float speed)
+    public LinerMoveToPosAction(Collider collider, Transform transform,
+        Vector3 targetPos, float speed) : base(collider)
     {
         _transform = transform;
         _targetPos = targetPos;
@@ -34,6 +35,11 @@ public class LinerMoveToPosAction : BehaviorTreeNode
 
     protected override State OnStay()
     {
+        if (IsTriggerEnter)
+        {
+            Debug.Log("ƒqƒbƒg!");
+        }
+
         if (Vector3.Distance(_transform.position, _targetPos) <= Approximately)
         {
             return State.Success;
