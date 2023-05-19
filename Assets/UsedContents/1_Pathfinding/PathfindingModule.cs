@@ -2,19 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PathfindingModule : MonoBehaviour
+/// <summary>
+/// A*を用いてグリッドから経路を求める
+/// </summary>
+[System.Serializable]
+public class PathfindingModule
 {
-    [SerializeField] PathfindingGrid _pathfindingGrid;
-
-    void Start()
+    public void Execute()
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        _pathfindingGrid.Create(transform);
-        player.transform.position = _pathfindingGrid.GetRandomPos();
-    }
-
-    public void OnDrawGizmos()
-    {
-        _pathfindingGrid.Visualize();
+        // 自身の位置
+        // ターゲットの位置
+        // 自身の座標を渡すと対応したグリッドのノードが手に入るメソッドが欲しい
     }
 }

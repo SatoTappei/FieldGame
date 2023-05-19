@@ -14,7 +14,7 @@ public class PathfindingNode
     }
 
     public bool IsPassable { get; set; }
-    public Vector3 Pos { get; }
+    public Vector3 Pos { get; set; }
 }
 
 /// <summary>
@@ -48,18 +48,27 @@ public class PathfindingGrid
     PathfindingNode[,] _grid;
 
     /// <summary>
+    /// グリッドを何回も生成しなおすことを考慮して別途初期化用のメソッドを使用する
+    /// </summary>
+    public void InitOnStart()
+    {
+        _grid = new PathfindingNode[_height, _width];
+        for(int i = 0; i < _height; i++)
+        {
+            for(int k = 0; k < _width; k++)
+            {
+                _grid[i, k] = new PathfindingNode(Vector3.zero, true);
+            }
+        }
+    }
+
+    /// <summary>
     /// 外部からこのメソッドを呼ぶことで経路探索のためのグリッドを生成する
     /// 引数で渡したTransformを中心に生成される
     /// </summary>
     public void Create(Transform transform)
     {
-        if (_grid != null)
-        {
-            Debug.LogWarning("既にグリッドを生成済み");
-            return;
-        }
-
-        _grid = new PathfindingNode[_height, _width];
+        //_grid = new PathfindingNode[_height, _width];
         
         NativeArray<RaycastHit> hits = new(_height * _width, Allocator.TempJob);
         NativeArray<SpherecastCommand> commands = new(_height * _width, Allocator.TempJob);
@@ -72,7 +81,9 @@ public class PathfindingGrid
                 Vector3 pos = transform.position;
                 pos.z += (i - (_height / 2)) * NodeSize;
                 pos.x += (k - (_width / 2)) * NodeSize;
-                _grid[i, k] = new PathfindingNode(pos, true);
+                //_grid[i, k] = new PathfindingNode(pos, true);
+                _grid[i, k].Pos = pos;
+                _grid[i, k].IsPassable = true;
 
                 // 障害物を検知するためのRayを飛ばすための設定
                 pos.y += _obstacleRayOriginY;
@@ -103,16 +114,6 @@ public class PathfindingGrid
 
         hits.Dispose();
         commands.Dispose();
-    }
-
-    public Vector3 GetRandomPos()
-    {
-        int rz = Random.Range(0, _height);
-        int rx = Random.Range(0, _width);
-
-        // TODO: 通行可能なマスなのか判定する必要がある
-
-        return _grid[rz, rx].Pos;
     }
 
     /// <summary>
