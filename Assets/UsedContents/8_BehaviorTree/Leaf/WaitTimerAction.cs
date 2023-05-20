@@ -6,7 +6,7 @@ using UnityEngine;
 public class WaitTimerAction : BehaviorTreeNode
 {
     float _waitTime;
-    float _current;
+    float _time;
 
     public WaitTimerAction(float waitTime)
     {
@@ -15,7 +15,7 @@ public class WaitTimerAction : BehaviorTreeNode
 
     protected override void OnEnter()
     {
-        _current = _waitTime;
+        _time = _waitTime;
     }
 
     protected override void OnExit()
@@ -25,14 +25,14 @@ public class WaitTimerAction : BehaviorTreeNode
 
     protected override State OnStay()
     {
-        _current -= Time.deltaTime;
-        if (_current < 0)
+        _time -= Time.deltaTime;
+        if (_time < 0)
         {
             return State.Success;
         }
         else
         {
-            return State.Runnning;
+            return State.Running;
         }
     }
 }

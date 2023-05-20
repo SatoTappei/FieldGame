@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
 
 /// <summary>
@@ -19,9 +18,8 @@ public class SelectorNode : BehaviorTreeNode, IBehaviorTreeNodeHolder
 
     List<BehaviorTreeNode> _childList = new();
     Rule _rule;
-    int _currentChildIndex;
 
-    public SelectorNode(Rule rule)
+    public SelectorNode(Rule rule, string nodeName) : base(nodeName)
     {
         _rule = rule;
     }
@@ -31,40 +29,28 @@ public class SelectorNode : BehaviorTreeNode, IBehaviorTreeNodeHolder
         // ランダムに子を選択する場合は一度シャッフルする
         if (_rule == Rule.Random)
         {
+            // TODO:毎フレームToList()を呼んでいるのと同じなので直す
             _childList = _childList.OrderBy(_ => System.Guid.NewGuid()).ToList();
         }
-
-        _currentChildIndex = 0;
-        Debug.Log("Selector開始");
     }
 
     protected override void OnExit()
     {
-        Debug.Log("Selector終了");
     }
 
     protected override State OnStay()
     {
-        State result = _childList[_currentChildIndex].Update();
+        foreach(BehaviorTreeNode node in _childList)
+        {
+            State result = node.Update();
 
-        if (result == State.Success)
-        {
-            return State.Success;
-        }
-        else if (result == State.Failure)
-        {
-            if(_currentChildIndex == _childList.Count - 1)
-            {
-                // 最後の子が失敗を返したらSelector自体が失敗を返す
-                return State.Failure;
-            }
-            else
-            {
-                _currentChildIndex++;
-            }
+            // 子が失敗した場合は次の子を実行する
+            if (result == State.Failure) continue;
+            // 子が実行中もしくは成功した場合は、次の子を実行せずに子の結果を返す
+            return result;
         }
 
-        return State.Runnning;
+        return State.Failure;
     }
 
     public void AddChild(BehaviorTreeNode node) => _childList.Add(node);

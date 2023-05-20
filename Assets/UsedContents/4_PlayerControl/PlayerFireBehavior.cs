@@ -8,6 +8,8 @@ public class PlayerFireBehavior : IInputActionRegistrable
 {
     [Header("UŒ‚‚ÌƒŒ[ƒg")]
     [SerializeField] float _attackRate = 0.33f;
+    [Header("UŒ‚‚ÉÄ¶‚·‚éParticle")]
+    [SerializeField] ParticleSystem _fireParticle;
 
     float _time;
     /// <summary>
@@ -39,6 +41,7 @@ public class PlayerFireBehavior : IInputActionRegistrable
         {
             _time = 0;
             GameManager.Instance.AudioModule.PlaySE(AudioType.SE_Fire);
+            _fireParticle.Play();
         }
     }
 }

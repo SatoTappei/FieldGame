@@ -1,15 +1,14 @@
 using System;
 
 /// <summary>
-/// コンディショナルノードのクラス
-/// 条件によって成功か失敗が選ばれる
+/// 指定したメソッドがtrueの間、実行するデコレーターノードのクラス
 /// </summary>
-public class ConditionalNode : BehaviorTreeNode, IBehaviorTreeNodeHolder
+public class LoopDecorator : BehaviorTreeNode, IBehaviorTreeNodeHolder
 {
-    BehaviorTreeNode _child;
     Func<bool> _judge;
+    BehaviorTreeNode _child;
 
-    public ConditionalNode(Func<bool> judge)
+    public LoopDecorator(Func<bool> judge, string nodeName) : base(nodeName)
     {
         _judge = judge;
     }
@@ -24,14 +23,15 @@ public class ConditionalNode : BehaviorTreeNode, IBehaviorTreeNodeHolder
 
     protected override State OnStay()
     {
+        _child.Update();
+
         if (_judge.Invoke())
         {
-            _child.Update();
-            return State.Runnning;
+            return State.Running;
         }
         else
         {
-            return State.Failure;
+            return State.Success;
         }
     }
 

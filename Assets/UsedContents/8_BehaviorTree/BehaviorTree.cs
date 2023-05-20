@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
-using State = BehaviorTreeNode.State;
 using Rule = SelectorNode.Rule;
 
 /// <summary>
@@ -10,49 +9,68 @@ using Rule = SelectorNode.Rule;
 /// </summary>
 public class BehaviorTree : MonoBehaviour
 {
-    //[SerializeField] Collider _collider;
     [SerializeField] Transform _startPoint;
     [SerializeField] Transform _goalPoint;
     [SerializeField] Transform _item;
     [SerializeField] Transform _item2;
+    [SerializeField] BehaviorTreeBlackBoard _blackBoard;
 
-    BehaviorTreeBlackBoard _blackBoad = new();
-    RootNode _rootNode = new();
-    //State _treeState = State.Runnning;
-    //List<BehaviorTreeNode> _nodeList = new();
-
-    //public bool _isTriggerEnter;
-
-    void Start()
+    void Awake()
     {
-        //SequenceNode sequence = new();
+        Rigidbody rigidbody = GetComponent<Rigidbody>();
 
-        LinerMoveToPosAction moveToItem = new(transform, _item.position, 10.0f);
-        //WaitTimerAction waitTime = new(2.0f);
+        SelectorNode ActorStateSelector = new(Rule.Order, "キャラクターの状態Selector");
+        SequenceNode moveAndAttackSequence = new("移動->攻撃Sequence");
+        SequenceNode moveSequence = new("経路探索->移動Sequence");
+        SequenceNode attackSequence = new("検知->発射Sequence");
 
-        //SelectorNode selector = new(Rule.Random);
-        //LinerMoveToPosAction moveToItem2 = new(transform, _item2.position, 7.0f);
-        //LinerMoveToPosAction moveToStartPoint = new(transform, _startPoint.position, 3.0f);
-        //// アイテムに向かって移動した後、一定時間待機する
-        //sequence.AddChild(moveToItem);
-        //sequence.AddChild(waitTime);
-        //// アイテム2もしくはゴール地点に移動する
-        //sequence.AddChild(selector);
-        //selector.AddChild(moveToItem2);
-        //selector.AddChild(moveToStartPoint);
+        LoopDecorator loopDecorator = new(Judge, "子を繰り返す");
+        TimerDecorator detectPlayerTimer = new(BehaviorTreeBlackBoard.DetectInterval, "一定間隔でプレイヤーを検知Decorator");
+        TimerDecorator fireTimer = new(_blackBoard.FireRate, "一定間隔で検知->発射をするDecorator");
 
-        //// ルートノードの子にSequenceをぶら下げる
-        //_rootNode._child = sequence;
+        DetectPlayerAction detectPlayer = new("プレイヤーを検知", _blackBoard);
+        PathfindingToPlayerAction pathfindingToFirePos = new("射撃位置までの経路探索");
+        LinerMoveToPosAction moveToFirePosAction = new(rigidbody, _item.position, _blackBoard.MoveSpeed, "射撃位置まで移動");
+        LinerMoveToPosAction standbyAction = new(rigidbody, _item.position, 0.0f, "その場で待機");
+        FireAction fireAction = new("弾を発射して攻撃", _blackBoard);
 
-        ConditionalNode conditional = new(_blackBoad.IsTimeElapsed);
-        conditional.AddChild(moveToItem);
-        _rootNode._child = conditional;
-        //conditional
+        // "移動->攻撃"or"待機"のSelector
+        ActorStateSelector.AddChild(moveAndAttackSequence);
+        ActorStateSelector.AddChild(standbyAction);
+        // 移動->攻撃のSequence
+        moveAndAttackSequence.AddChild(moveSequence);
+        moveAndAttackSequence.AddChild(loopDecorator);
+        // 一定間隔で検知->経路探索->移動のSequence
+        moveSequence.AddChild(detectPlayerTimer);
+        moveSequence.AddChild(pathfindingToFirePos);
+        moveSequence.AddChild(moveToFirePosAction);
+        detectPlayerTimer.AddChild(detectPlayer);
+        // 移動が完了した場合、一定間隔で検知->攻撃のSequenceを実行する
+        loopDecorator.AddChild(fireTimer);
+        fireTimer.AddChild(attackSequence);
+        attackSequence.AddChild(detectPlayer);
+        attackSequence.AddChild(fireAction);
 
-        // Update()のタイミングでノードを更新する
-        this.UpdateAsObservable().Subscribe(_ => _rootNode.Update());
+        RootNode rootNode = new();
+        rootNode._child = ActorStateSelector;
 
-        //this.OnTriggerEnterAsObservable().Subscribe(_ => _isTriggerEnter = true);
-        //this.LateUpdateAsObservable().Subscribe(_ => _isTriggerEnter = false);
+        // FixedUpdate()のタイミングでノードを更新する
+        this.FixedUpdateAsObservable().Subscribe(_ => rootNode.Update());
+    }
+
+    // 条件を満たすまでLoopの条件処理、一旦ここに置く
+    bool Judge()
+    {
+        return true;
+    }
+
+    void OnDrawGizmos()
+    {
+        if(_blackBoard.Transform != null)
+        {
+            // プレイヤーを検知する範囲
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(_blackBoard.Transform.position, _blackBoard.DetectRadius);
+        }
     }
 }

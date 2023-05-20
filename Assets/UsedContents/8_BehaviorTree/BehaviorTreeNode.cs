@@ -1,3 +1,5 @@
+using UnityEngine;
+
 /// <summary>
 /// BehaviorTreeで使用するノードのクラス
 /// </summary>
@@ -5,13 +7,30 @@ public abstract class BehaviorTreeNode
 {
     public enum State
     {
-        Runnning,
+        Running,
         Failure,
         Success,
     }
 
     State _currentState;
     bool _isActive;
+
+    public BehaviorTreeNode() { }
+    public BehaviorTreeNode(string nodeName, BehaviorTreeBlackBoard blackBoard = null)
+    {
+        NodeName = nodeName;
+        BlackBoard = blackBoard;
+    }
+
+    /// <summary>
+    /// 各ノードから値を読み書きするための黒板
+    /// 使用する場合はコンストラクタで参照を渡すこと
+    /// </summary>
+    protected BehaviorTreeBlackBoard BlackBoard { get; }
+    /// <summary>
+    /// ログやUI等に表示するためのノード名
+    /// </summary>
+    public string NodeName { get; }
 
     /// <summary>
     /// TreeのクラスからUpdate()のタイミングで呼ばれるメソッド
@@ -25,6 +44,10 @@ public abstract class BehaviorTreeNode
             _isActive = true;
             OnEnter();
         }
+
+#if UNITY_EDITOR
+        Debug.Log(NodeName + "を実行中");
+#endif
 
         _currentState = OnStay();
 

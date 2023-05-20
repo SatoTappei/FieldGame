@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 /// <summary>
 /// ルートノードのクラス
 /// </summary>
 public class RootNode : BehaviorTreeNode
 {
     public BehaviorTreeNode _child;
+
+    public RootNode() : base("ルートノード") { }
 
     protected override void OnEnter()
     {

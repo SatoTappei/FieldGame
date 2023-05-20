@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 /// <summary>
 /// シーケンスノードのクラス
@@ -7,41 +6,40 @@ using UnityEngine;
 public class SequenceNode : BehaviorTreeNode, IBehaviorTreeNodeHolder
 {
     List<BehaviorTreeNode> _childList = new();
+    /// <summary>
+    /// 子が実行中の状態を返した場合に次シーケンスが実行される際
+    /// 1番目の子から実行されるのを防ぐために実行中の子の添え字を保持しておく
+    /// </summary>
     int _currentChildIndex;
+
+    public SequenceNode(string nodeName) : base(nodeName) { }
 
     protected override void OnEnter()
     {
         _currentChildIndex = 0;
-        Debug.Log("Sequence開始");
     }
 
     protected override void OnExit()
     {
-        Debug.Log("Sequence終了");
     }
 
     protected override State OnStay()
     {
-        State result = _childList[_currentChildIndex].Update();
-
-        if (result == State.Success)
+        while (_currentChildIndex < _childList.Count)
         {
-            if (_currentChildIndex == _childList.Count - 1)
-            {
-                return State.Success;
-            }
-            else
+            State result = _childList[_currentChildIndex].Update();
+
+            // 子が成功した場合は
+            if(result == State.Success)
             {
                 _currentChildIndex++;
+                continue;
             }
-        }
-        else if(result == State.Failure)
-        {
-            // 子が失敗を返したらSequence自体が失敗を返す
-            return State.Failure;
+
+            return result;
         }
 
-        return State.Runnning;
+        return State.Success;
     }
 
     public void AddChild(BehaviorTreeNode node) => _childList.Add(node);
