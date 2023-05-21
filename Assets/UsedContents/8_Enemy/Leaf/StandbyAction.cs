@@ -3,12 +3,12 @@ using UnityEngine;
 /// <summary>
 /// 任意の時間待機するアクションノード
 /// </summary>
-public class WaitTimerAction : BehaviorTreeNode
+public class StandbyAction : BehaviorTreeNode
 {
     float _waitTime;
     float _time;
 
-    public WaitTimerAction(float waitTime)
+    public StandbyAction(float waitTime, string nodeName) : base(nodeName)
     {
         _waitTime = waitTime;
     }

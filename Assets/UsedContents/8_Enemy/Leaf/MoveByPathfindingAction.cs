@@ -67,7 +67,7 @@ public class MoveByPathfindingAction : BehaviorTreeNode
         }
         else
         {
-            MoveToTarget();
+            MoveAndRotate();
         }
 
         return State.Running;
@@ -90,10 +90,20 @@ public class MoveByPathfindingAction : BehaviorTreeNode
         return count > 0;
     }
 
-    void MoveToTarget()
+    void MoveAndRotate()
     {
-        Vector3 velo = (_targetPos - BlackBoard.Transform.position).normalized * BlackBoard.MoveSpeed;
+        Vector3 dir = (_targetPos - BlackBoard.Transform.position).normalized;
+        
+        // ˆÚ“®
+        Vector3 velo = dir * BlackBoard.MoveSpeed;
         velo.y = BlackBoard.Rigidbody.velocity.y;
         BlackBoard.Rigidbody.velocity = velo;
+        // ‰ñ“]
+        Quaternion playerRot = Quaternion.AngleAxis(BlackBoard.Player.position.y, Vector3.up);
+        Quaternion rot = Quaternion.LookRotation(playerRot * dir, Vector3.up);
+        rot.x = 0;
+        rot.z = 0;
+        BlackBoard.Model.rotation = Quaternion.Lerp(BlackBoard.Model.rotation, rot, 
+            Time.deltaTime * BlackBoard.RotSpeed);
     }
 }

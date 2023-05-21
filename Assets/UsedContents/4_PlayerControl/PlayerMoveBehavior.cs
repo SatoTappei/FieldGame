@@ -14,7 +14,7 @@ public class PlayerMoveBehavior : IInputActionRegistrable
     [Header("移動に応じた方向に振り向かせるオブジェクト")]
     [SerializeField] Transform _model;
     [Header("振り向き速度")]
-    [SerializeField] float _rotSpeed = 20;
+    [SerializeField] float _rotSpeed = 20.0f;
 
     /// <summary>
     /// 入力を移動方向(正規化済み)に変換した値

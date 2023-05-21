@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 /// <summary>
 /// BehaviorTreeで使用するノードのクラス
@@ -32,6 +33,9 @@ public abstract class BehaviorTreeNode
     /// </summary>
     public string NodeName { get; }
 
+    public UnityAction OnNodeEnter { get; set; }
+    public UnityAction OnNodeExit { get; set; }
+
     /// <summary>
     /// TreeのクラスからUpdate()のタイミングで呼ばれるメソッド
     /// 最初の1回は"OnEnter()とOnStay()"が呼ばれる
@@ -41,6 +45,7 @@ public abstract class BehaviorTreeNode
     {
         if (!_isActive)
         {
+            OnNodeEnter?.Invoke();
             _isActive = true;
             OnEnter();
         }
@@ -55,6 +60,7 @@ public abstract class BehaviorTreeNode
         {
             OnExit();
             _isActive = false;
+            OnNodeExit?.Invoke();
         }
 
         return _currentState;

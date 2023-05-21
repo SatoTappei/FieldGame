@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/InGame.unity
     guid: 99374adc289f3a74ea9a36e07dbdaa93
   - enabled: 1
-    path: Assets/UsedContents/8_BehaviorTree/BehaviorTree.unity
+    path: Assets/UsedContents/8_Enemy/BehaviorTree.unity
     guid: e78bd8808e2c2bc42a087ef1255f5666
   m_configObjects: {}

@@ -30,9 +30,12 @@ public class BehaviorTreeBlackBoard
     [Header("ˆÚ“®‘¬“x")]
     [Range(0.01f, 9.0f)]
     [SerializeField] float _moveSpeed = 5.0f;
+    [Header("‰ñ“]‘¬“x")]
+    [SerializeField] float _rotSpeed = 10.0f;
 
     public Transform Player => _player;
     public Transform Transform => _transform;
+    public Transform Model => _model;
     public Rigidbody Rigidbody => _rigidbody;
     public ParticleSystem FireParticle => _fireParticle;
     public LayerMask PlayerLayer => _playerLayer;
@@ -40,6 +43,7 @@ public class BehaviorTreeBlackBoard
     public float FireRadius => _fireRadius;
     public float FireRate => _fireRate;
     public float MoveSpeed => _moveSpeed;
+    public float RotSpeed => _rotSpeed;
 
     Queue<Vector3> _path;
 
