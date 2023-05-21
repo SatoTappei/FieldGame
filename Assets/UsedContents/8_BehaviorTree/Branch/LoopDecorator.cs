@@ -1,17 +1,11 @@
-using System;
-
 /// <summary>
-/// 指定したメソッドがtrueの間、実行するデコレーターノードのクラス
+/// 子が失敗するまで子を実行しつつ実行中を返すデコレーターノードのクラス
 /// </summary>
 public class LoopDecorator : BehaviorTreeNode, IBehaviorTreeNodeHolder
 {
-    Func<bool> _judge;
     BehaviorTreeNode _child;
 
-    public LoopDecorator(Func<bool> judge, string nodeName) : base(nodeName)
-    {
-        _judge = judge;
-    }
+    public LoopDecorator(string nodeName) : base(nodeName) { }
 
     protected override void OnEnter()
     {
@@ -23,15 +17,15 @@ public class LoopDecorator : BehaviorTreeNode, IBehaviorTreeNodeHolder
 
     protected override State OnStay()
     {
-        _child.Update();
+        State result = _child.Update();
 
-        if (_judge.Invoke())
+        if (result == State.Failure)
         {
-            return State.Running;
+            return State.Success;
         }
         else
         {
-            return State.Success;
+            return State.Running;
         }
     }
 

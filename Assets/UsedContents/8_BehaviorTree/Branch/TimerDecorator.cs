@@ -1,17 +1,19 @@
 using UnityEngine;
 
 /// <summary>
-/// 指定したメソッドで判定するデコレーターノードのクラス
-/// 一定間隔で子を実行して子と同じ結果を返す
+/// 一定間隔で子を実行して子と同じ結果を返するデコレーターノードのクラス
+/// 待機中は指定した状態を返す
 /// </summary>
 public class TimerDecorator : BehaviorTreeNode, IBehaviorTreeNodeHolder
 {
     BehaviorTreeNode _child;
+    State _waitingState;
     float _interval;
     float _time;
 
-    public TimerDecorator(float interval, string nodeName) : base(nodeName)
+    public TimerDecorator(State waitingState, float interval, string nodeName) : base(nodeName)
     {
+        _waitingState = waitingState;
         _interval = interval;
     }
 
@@ -33,7 +35,7 @@ public class TimerDecorator : BehaviorTreeNode, IBehaviorTreeNodeHolder
         }
         else
         {
-            return State.Failure;
+            return _waitingState;
         }
     }
 

@@ -16,7 +16,7 @@ public class FireAction : BehaviorTreeNode
 
     protected override State OnStay()
     {
-        BlackBoard.FireParticle?.Play();
+        BlackBoard.FireParticle.Play();
         return State.Success;
     }
 }

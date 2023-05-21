@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -6,7 +7,8 @@ using UnityEngine;
 /// </summary>
 public class PathfindingToPlayerAction : BehaviorTreeNode
 {
-    public PathfindingToPlayerAction(string nodeName) : base(nodeName) { }
+    public PathfindingToPlayerAction(string nodeName, BehaviorTreeBlackBoard blackBoard)
+        : base(nodeName, blackBoard) { }
 
     protected override void OnEnter()
     {
@@ -18,8 +20,10 @@ public class PathfindingToPlayerAction : BehaviorTreeNode
 
     protected override State OnStay()
     {
-        // TODO:‹‚ß‚ç‚ê‚È‚©‚Á‚½‚ç¸”s‚ğ•Ô‚·‚æ‚¤‚É‚·‚é
-        Debug.Log("PathfindingToPlayerAction‚ÅŒo˜H‚ğ‹‚ß‚é");
+        // Œo˜H’Tõ‚ÌƒNƒ‰ƒX‚Å‹‚ß‚½Œo˜H‚ğ•”Â‚É‘‚«‚Ş
+        Queue<Vector3> path = TempPathfindingSystem.Instance.GetPath(BlackBoard.Transform.position);
+        BlackBoard.Path = path;
+
         return State.Success;
     }
 }

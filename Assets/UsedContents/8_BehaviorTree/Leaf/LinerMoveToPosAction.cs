@@ -17,6 +17,7 @@ public class LinerMoveToPosAction : BehaviorTreeNode
     Vector3 _targetPos;
     float _speed;
 
+    // TODO:BlackBoardにデータをまとめたのでBlackBoardを渡すだけで大丈夫
     public LinerMoveToPosAction(Rigidbody rigidbody, Vector3 targetPos, float speed,
         string nodeName) : base(nodeName)
     {

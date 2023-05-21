@@ -3,6 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// プレイヤーを検知するアクションノード
+/// 検知した場合は成功、しなかった場合は失敗を返すだけで、黒板に書き込みはしない
 /// </summary>
 public class DetectPlayerAction : BehaviorTreeNode
 {
