@@ -19,6 +19,12 @@ public class BehaviorTree : MonoBehaviour
         _animationModule.InitOnAwake();
         _healthModule.InitOnAwake(transform);
 
+        _healthModule.OnDamaged += () => _animationModule.Play(AnimType.Damaged);
+        this.OnDisableAsObservable().Subscribe(_=>
+        {
+            _healthModule.OnDamaged -= () => _animationModule.Play(AnimType.Damaged);
+        });
+
         // Tree‚ğì¬‚·‚é
         RootNode rootNode = new();
         rootNode._child = CreateTree();

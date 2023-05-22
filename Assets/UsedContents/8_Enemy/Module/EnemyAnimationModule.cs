@@ -17,6 +17,7 @@ public class EnemyAnimationModule
         Idle,
         Move,
         Defeated,
+        Damaged,
     }
 
     [SerializeField] Animator _animator;
