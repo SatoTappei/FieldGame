@@ -3,18 +3,22 @@ using UniRx.Triggers;
 using UnityEngine;
 using Rule = SelectorNode.Rule;
 using State = BehaviorTreeNode.State;
-using AnimType = AnimationModule.AnimType;
+using AnimType = EnemyAnimationModule.AnimType;
+
 /// <summary>
 /// BehaviorTree本体のクラス
 /// </summary>
 public class BehaviorTree : MonoBehaviour
 {
     [SerializeField] BehaviorTreeBlackBoard _blackBoard;
-    [SerializeField] AnimationModule _animationModule;
+    [SerializeField] EnemyAnimationModule _animationModule;
+    [SerializeField] EnemyHealthModule _healthModule;
 
     void Awake()
     {
         _animationModule.InitOnAwake();
+        _healthModule.InitOnAwake(transform);
+
         // Treeを作成する
         RootNode rootNode = new();
         rootNode._child = CreateTree();
@@ -56,8 +60,6 @@ public class BehaviorTree : MonoBehaviour
         moveSequence.AddChild(pathfindingToPlayer);
         moveSequence.AddChild(moveByPathfindingAction);
         detectPlayerTimer.AddChild(detectPlayer);
-        moveByPathfindingAction.OnNodeEnter += () => _animationModule.Play(AnimType.Move);
-        moveByPathfindingAction.OnNodeExit += () => _animationModule.Play(AnimType.Idle);
         // 移動が完了した場合、一定間隔で検知->攻撃のSequenceを実行する
         loopDecorator.AddChild(rotSequence);
         rotSequence.AddChild(rotToPlayerAction);
@@ -65,6 +67,14 @@ public class BehaviorTree : MonoBehaviour
         fireTimer.AddChild(attackSequence);
         attackSequence.AddChild(detectPlayer);
         attackSequence.AddChild(fireAction);
+
+        moveByPathfindingAction.OnNodeEnter += () => _animationModule.Play(AnimType.Move);
+        moveByPathfindingAction.OnNodeExit += () => _animationModule.Play(AnimType.Idle);
+        this.OnDisableAsObservable().Subscribe(_ =>
+        {
+            moveByPathfindingAction.OnNodeEnter -= () => _animationModule.Play(AnimType.Move);
+            moveByPathfindingAction.OnNodeExit -= () => _animationModule.Play(AnimType.Idle);
+        });
 
         // ルートノードの子として登録するノードを返す
         return actorStateSelector;
@@ -102,12 +112,3 @@ public class BehaviorTree : MonoBehaviour
         Gizmos.DrawRay(rayOrigin, rayDir * _blackBoard.FireRadius);
     }
 }
-
-// アニメーションの再生がしたい
-// アニメーションは移動と死亡の2つ
-// 移動している場合は移動のアニメーション
-// 待機中はアイドルのアニメーション
-// 敵には体力がある
-// 死亡したら死んだAnimation -> ECSでエフェクト再生
-
-// 体力の判定はTreeの外で行う

@@ -13,11 +13,15 @@ public class TempPathfindingSystem : MonoBehaviour
 
     void Awake()
     {
-        Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
     }
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    void Release() => Instance = null;
 
     public Queue<Vector3> GetPath(Vector3 currentPos)
     {

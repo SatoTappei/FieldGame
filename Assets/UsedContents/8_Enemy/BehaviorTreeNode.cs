@@ -33,8 +33,8 @@ public abstract class BehaviorTreeNode
     /// </summary>
     public string NodeName { get; }
 
-    public UnityAction OnNodeEnter { get; set; }
-    public UnityAction OnNodeExit { get; set; }
+    public event UnityAction OnNodeEnter;
+    public event UnityAction OnNodeExit;
 
     /// <summary>
     /// TreeのクラスからUpdate()のタイミングで呼ばれるメソッド

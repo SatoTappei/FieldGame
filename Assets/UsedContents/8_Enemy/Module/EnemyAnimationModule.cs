@@ -6,7 +6,7 @@ using UnityEngine;
 /// アニメーションの再生を行うクラス
 /// </summary>
 [System.Serializable]
-public class AnimationModule
+public class EnemyAnimationModule
 {
     /// <summary>
     /// アニメーションの再生をする際に使用する列挙型
