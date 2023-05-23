@@ -7,14 +7,21 @@ using Unity.Collections;
 /// </summary>
 public class PathfindingNode
 {
-    public PathfindingNode(Vector3 pos, bool isPassable)
+    public PathfindingNode(Vector3 pos, int z, int x, bool isPassable)
     {
-        IsPassable = isPassable;
         Pos = pos;
+        Z = z;
+        X = x;
+        IsPassable = isPassable;
     }
 
-    public bool IsPassable { get; set; }
+    public PathfindingNode Parent { get; set; }
     public Vector3 Pos { get; set; }
+    public int Z { get; private set; }
+    public int X { get; private set; }
+    public int ActualCost { get; set; }
+    public int EstimateCost { get; set; }
+    public bool IsPassable { get; set; }
 }
 
 /// <summary>
@@ -45,19 +52,25 @@ public class PathfindingGrid
     [Header("Rayを飛ばす際のバッチ数の目安")]
     [SerializeField] int _commandsPerJob = 20;
 
-    PathfindingNode[,] _grid;
+    public PathfindingNode[,] Grid { get; private set; }
+
+    /// <summary>
+    /// ギズモに表示させるための座標
+    /// 最後にGetNode()で返したノードの座標が入る
+    /// </summary>
+    Vector3? _gizmosHighlightNodePos;
 
     /// <summary>
     /// グリッドを何回も生成しなおすことを考慮して別途初期化用のメソッドを使用する
     /// </summary>
     public void InitOnStart()
     {
-        _grid = new PathfindingNode[_height, _width];
+        Grid = new PathfindingNode[_height, _width];
         for(int i = 0; i < _height; i++)
         {
             for(int k = 0; k < _width; k++)
             {
-                _grid[i, k] = new PathfindingNode(Vector3.zero, true);
+                Grid[i, k] = new PathfindingNode(Vector3.zero, i, k, true);
             }
         }
     }
@@ -68,8 +81,6 @@ public class PathfindingGrid
     /// </summary>
     public void Create(Transform transform)
     {
-        //_grid = new PathfindingNode[_height, _width];
-        
         NativeArray<RaycastHit> hits = new(_height * _width, Allocator.TempJob);
         NativeArray<SpherecastCommand> commands = new(_height * _width, Allocator.TempJob);
         
@@ -81,9 +92,8 @@ public class PathfindingGrid
                 Vector3 pos = transform.position;
                 pos.z += (i - (_height / 2)) * NodeSize;
                 pos.x += (k - (_width / 2)) * NodeSize;
-                //_grid[i, k] = new PathfindingNode(pos, true);
-                _grid[i, k].Pos = pos;
-                _grid[i, k].IsPassable = true;
+                Grid[i, k].Pos = pos;
+                Grid[i, k].IsPassable = true;
 
                 // 障害物を検知するためのRayを飛ばすための設定
                 pos.y += _obstacleRayOriginY;
@@ -99,7 +109,6 @@ public class PathfindingGrid
             }
         }
 
-        
         JobHandle handle = SpherecastCommand.ScheduleBatch(commands, hits, _commandsPerJob, default(JobHandle));
         handle.Complete();
 
@@ -109,11 +118,44 @@ public class PathfindingGrid
             int iz = i / _width;
             int ix = i % _height;
 
-            _grid[iz, ix].IsPassable = hits[i].collider == null;
+            Grid[iz, ix].IsPassable = hits[i].collider == null;
         }
 
         hits.Dispose();
         commands.Dispose();
+    }
+
+    /// <summary>
+    /// 座標に対応したノードを返す
+    /// </summary>
+    public PathfindingNode GetNode(Vector3 pos)
+    {
+        float forwardZ = Grid[0, 0].Pos.z;
+        float backZ = Grid[_height - 1, _width - 1].Pos.z;
+        float leftX = Grid[0, 0].Pos.x;
+        float rightX = Grid[_height - 1, _width - 1].Pos.x;
+
+        if (forwardZ <= pos.z && pos.z <= backZ && leftX <= pos.x && pos.x <= rightX)
+        {
+            // グリッドの1辺の長さ
+            float lengthZ = backZ - forwardZ;
+            float lengthX = rightX - leftX;
+            // グリッドの端から座標までの長さ
+            float fromPosZ = pos.z - forwardZ;
+            float fromPosX = pos.x - leftX;
+            // グリッドの端から何％の位置か
+            float percentZ = Mathf.Abs(fromPosZ / lengthZ);
+            float percentX = Mathf.Abs(fromPosX / lengthX);
+            // 添え字に対応させる
+            int indexZ = Mathf.RoundToInt((_height - 1) * percentZ);
+            int indexX = Mathf.RoundToInt((_width - 1) * percentX);
+
+            _gizmosHighlightNodePos = Grid[indexZ, indexX].Pos;
+            return Grid[indexZ, indexX];
+        }
+
+        _gizmosHighlightNodePos = null;
+        return null;
     }
 
     /// <summary>
@@ -122,15 +164,21 @@ public class PathfindingGrid
     /// </summary>
     public void Visualize()
     {
-        if (_visualizeOnGizmos && _grid != null)
+        if (_visualizeOnGizmos && Grid != null)
         {
             for (int i = 0; i < _height; i++)
             {
                 for (int k = 0; k < _width; k++)
                 {
-                    Gizmos.color = _grid[i, k].IsPassable ? Color.green : Color.red;
-                    Gizmos.DrawCube(_grid[i, k].Pos, Vector3.one * NodeSize * NodeGizmoViewMag);
+                    Gizmos.color = Grid[i, k].IsPassable ? Color.green : Color.red;
+                    Gizmos.DrawCube(Grid[i, k].Pos, Vector3.one * NodeSize * NodeGizmoViewMag);
                 }
+            }
+
+            if (_gizmosHighlightNodePos != null)
+            {
+                Gizmos.color = Color.blue;
+                Gizmos.DrawCube((Vector3)_gizmosHighlightNodePos, Vector3.one * NodeSize * NodeGizmoViewMag);
             }
         }
     }
