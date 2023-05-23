@@ -47,7 +47,7 @@ public class PathfindingSystem : MonoBehaviour
             foreach(Vector3 pos in _path)
             {
                 Gizmos.color = Color.magenta;
-                Gizmos.DrawCube(pos, Vector3.one * 1.25f);
+                Gizmos.DrawCube(pos, Vector3.one);
             }
         }
 

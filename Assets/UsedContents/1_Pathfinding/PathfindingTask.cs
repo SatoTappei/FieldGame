@@ -17,46 +17,59 @@ public class PathfindingTask
         List<PathfindingNode> openList = new();
         List<PathfindingNode> closedList = new();
 
-        PathfindingNode current = grid[from.Z, from.X];
-        closedList.Add(current);
+        openList.Add(grid[from.Z, from.X]);
 
         int count = 0;
         while(count++ < MaxPathDistance)
         {
+            // コストが一番低いノードを選択
+            PathfindingNode current = openList.OrderBy(node => node.ActualCost + node.EstimateCost)
+                .ThenBy(node => node.ActualCost).FirstOrDefault();
+
+            // 現在のノードをopenからcloseへ
+            openList.Remove(current);
+            closedList.Add(current);
+
+            // 目的地に到着した
+            if (current.Z == to.Z && current.X == to.X)
+            {
+                PathfindingNode goalNode = current;
+                Queue<Vector3> path = new();
+                while (goalNode.Parent != from)
+                {
+                    path.Enqueue(goalNode.Pos);
+                    goalNode = goalNode.Parent;
+                }
+
+                return path;
+            }
+
             // 周囲8つ
             List<PathfindingNode> neighbourList = new(8);
             GetNeighbour(current.Z, current.X, neighbourList, grid);
 
             // 周囲8つのノードのコストを計算
-            foreach (PathfindingNode node in neighbourList)
+            foreach (PathfindingNode neighbour in neighbourList)
             {
-                node.Parent = current;
+                // closeのリストに含まれていたら省く
+                if (closedList.Contains(neighbour)) continue;
 
-                if (node.Z == to.Z && node.X == to.X)
+                int additionalCost = CalcDistance(neighbour.Z, neighbour.X, current.Z, current.X);
+                int neighbourActualCost = current.ActualCost + additionalCost;
+
+                bool already = openList.Contains(neighbour);
+                if (neighbourActualCost < neighbour.ActualCost || !already)
                 {
-                    PathfindingNode goalNode = node;
-                    Queue<Vector3> path = new();
-                    while (goalNode.Parent != null)
+                    neighbour.ActualCost = neighbourActualCost;
+                    neighbour.EstimateCost = CalcDistance(neighbour.Z, neighbour.X, to.Z, to.X);
+                    neighbour.Parent = current;
+
+                    if (!already)
                     {
-                        path.Enqueue(goalNode.Pos);
-                        goalNode = node.Parent;
+                        openList.Add(neighbour);
                     }
-
-                    return path;
                 }
-
-                node.ActualCost += current.ActualCost + 1;
-                node.EstimateCost = CalcEstimateCost(to.Z, from.Z, to.X, from.X);
             }
-
-            // 開いたノードのリストに追加
-            openList.AddRange(neighbourList);
-
-            // 閉じたノードのリストに追加
-            closedList.Add(current);
-
-            // コストが一番低いノードを次のノードに設定
-            current = openList.OrderBy(node => node.ActualCost + node.EstimateCost).ThenBy(node => node.ActualCost).FirstOrDefault();
         }
 
         return null;
@@ -70,6 +83,9 @@ public class PathfindingTask
             {
                 if (i == 0 && k == 0) continue;
 
+                if (z + i < 0 || grid.GetLength(0) <= z + i ||
+                    x + k < 0 || grid.GetLength(1) <= x + k) continue;
+
                 if (grid[z + i, x + k].IsPassable)
                 {
                     list.Add(grid[z + i, x + k]);
@@ -78,7 +94,7 @@ public class PathfindingTask
         }
     }
 
-    int CalcEstimateCost(int toZ, int fromZ, int toX, int fromX)
+    int CalcDistance(int toZ, int toX, int fromZ, int fromX)
     {
         int distZ = Mathf.Abs(toZ - fromZ);
         int distX = Mathf.Abs(toX - fromX);
