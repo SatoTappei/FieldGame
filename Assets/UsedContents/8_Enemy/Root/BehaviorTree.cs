@@ -12,24 +12,35 @@ public class BehaviorTree : MonoBehaviour
 {
     [SerializeField] BehaviorTreeBlackBoard _blackBoard;
     [SerializeField] EnemyAnimationModule _animationModule;
-    [SerializeField] EnemyHealthModule _healthModule;
+    [SerializeField] EnemyLifePointModule _lifePointModule;
+    [SerializeField] EnemyPerformanceModule _performanceModule;
 
     void Awake()
     {
         _animationModule.InitOnAwake();
-        _healthModule.InitOnAwake(transform);
-
-        _healthModule.OnDamaged += () => _animationModule.Play(AnimType.Damaged);
-        this.OnDisableAsObservable().Subscribe(_=>
-        {
-            _healthModule.OnDamaged -= () => _animationModule.Play(AnimType.Damaged);
-        });
+        _lifePointModule.InitOnAwake(transform, _blackBoard);
 
         // Treeを作成する
         RootNode rootNode = new();
-        rootNode._child = CreateTree();
+        rootNode.AddChild(CreateTree());
+
         // FixedUpdate()のタイミングでノードを更新する
-        this.FixedUpdateAsObservable().Subscribe(_ => rootNode.Update());
+        this.FixedUpdateAsObservable()
+            .TakeWhile(_ => _blackBoard.LifePoint > 0)
+            .DoOnCompleted(() => 
+            {
+                // 撃破された場合は非表示にしてエフェクトを生成する
+                gameObject.SetActive(false);
+                _performanceModule.Defeated(transform.position);
+            })
+            .Subscribe(_ => rootNode.Update());
+
+        // ダメージを受けた際の処理をコールバックに登録
+        _lifePointModule.OnDamaged += () => _animationModule.Play(AnimType.Damaged);
+        this.OnDisableAsObservable().Subscribe(_ =>
+        {
+            _lifePointModule.OnDamaged -= () => _animationModule.Play(AnimType.Damaged);
+        });
     }
 
     BehaviorTreeNode CreateTree()
@@ -58,14 +69,17 @@ public class BehaviorTree : MonoBehaviour
         // "移動->攻撃"or"待機"のSelector
         actorStateSelector.AddChild(moveAndAttackSequence);
         actorStateSelector.AddChild(standbyAction);
+
         // 移動->攻撃のSequence
         moveAndAttackSequence.AddChild(moveSequence);
         moveAndAttackSequence.AddChild(loopDecorator);
+
         // 一定間隔で検知->経路探索->移動のSequence
         moveSequence.AddChild(detectPlayerTimer);
         moveSequence.AddChild(pathfindingToPlayer);
         moveSequence.AddChild(moveByPathfindingAction);
         detectPlayerTimer.AddChild(detectPlayer);
+
         // 移動が完了した場合、一定間隔で検知->攻撃のSequenceを実行する
         loopDecorator.AddChild(rotSequence);
         rotSequence.AddChild(rotToPlayerAction);
@@ -74,6 +88,7 @@ public class BehaviorTree : MonoBehaviour
         attackSequence.AddChild(detectPlayer);
         attackSequence.AddChild(fireAction);
 
+        // 移動する際にアニメーションするようコールバックへ登録
         moveByPathfindingAction.OnNodeEnter += () => _animationModule.Play(AnimType.Move);
         moveByPathfindingAction.OnNodeExit += () => _animationModule.Play(AnimType.Idle);
         this.OnDisableAsObservable().Subscribe(_ =>

@@ -9321,8 +9321,11 @@ MonoBehaviour:
     _fireRate: 0.13
     _moveSpeed: 9
     _rotSpeed: 10
+    _lifePoint: 3
   _animationModule:
     _animator: {fileID: 8205365232001294673}
+  _performanceModule:
+    _defeatedParticle: {fileID: 8405853138380592667, guid: 04610925de33551468112cefd8d1a41b, type: 3}
 --- !u!54 &8205365232001294675
 Rigidbody:
   m_ObjectHideFlags: 0

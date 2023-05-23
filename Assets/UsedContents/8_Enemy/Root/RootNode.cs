@@ -1,9 +1,9 @@
 /// <summary>
 /// ルートノードのクラス
 /// </summary>
-public class RootNode : BehaviorTreeNode
+public class RootNode : BehaviorTreeNode, IBehaviorTreeNodeHolder
 {
-    public BehaviorTreeNode _child;
+    BehaviorTreeNode _child;
 
     public RootNode() : base("ルートノード") { }
 
@@ -19,4 +19,6 @@ public class RootNode : BehaviorTreeNode
     {
         return _child.Update();
     }
+
+    public void AddChild(BehaviorTreeNode node) => _child = node;
 }

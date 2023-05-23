@@ -32,6 +32,8 @@ public class BehaviorTreeBlackBoard
     [SerializeField] float _moveSpeed = 5.0f;
     [Header("回転速度")]
     [SerializeField] float _rotSpeed = 10.0f;
+    [Header("体力(ダメージ1の弾に対して)")]
+    [SerializeField] int _lifePoint = 3;
 
     public Transform Player => _player;
     public Transform Transform => _transform;
@@ -72,4 +74,10 @@ public class BehaviorTreeBlackBoard
             _path = value;
         }
     }
+
+    /// <summary>
+    /// EnemyHealthModuleが読み取って計算して書き込む
+    /// 各ノードでは読み取りしかしない
+    /// </summary>
+    public int LifePoint { get => _lifePoint; set => _lifePoint = value; }
 }
