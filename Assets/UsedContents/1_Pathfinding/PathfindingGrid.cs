@@ -5,7 +5,7 @@ using Unity.Collections;
 /// <summary>
 /// グリッドに敷き詰められるノードのクラス
 /// </summary>
-public class PathfindingNode
+public class PathfindingNode : IBinaryHeapCollectable<PathfindingNode>
 {
     public PathfindingNode(Vector3 pos, int z, int x, bool isPassable)
     {
@@ -21,7 +21,21 @@ public class PathfindingNode
     public int X { get; private set; }
     public int ActualCost { get; set; }
     public int EstimateCost { get; set; }
+    public int TotalCost => ActualCost + EstimateCost;
     public bool IsPassable { get; set; }
+
+    public int BinaryHeapIndex { get; set; }
+    public int CompareTo(PathfindingNode other)
+    {
+        int result = TotalCost.CompareTo(other.TotalCost);
+        if (result == 0)
+        {
+            result = EstimateCost.CompareTo(other.EstimateCost);
+        }
+
+        // コストが小さい方が欲しいので返す際に-1を乗算する
+        return -result;
+    }
 }
 
 /// <summary>
@@ -31,7 +45,7 @@ public class PathfindingNode
 public class PathfindingGrid
 {
     /// <summary>
-    /// 理由がない限り1で固定。オブジェクト側が大きさを合わせれば良い。
+    /// 理由がない限り1で固定。オブジェクト側が大きさを合わせれば良い
     /// </summary>
     static readonly int NodeSize = 1;
     /// <summary>

@@ -14,21 +14,17 @@ public class PathfindingTask
 
     public Stack<Vector3> Execute(PathfindingNode to, PathfindingNode from, PathfindingNode[,] grid)
     {
-        List<PathfindingNode> openList = new();
-        List<PathfindingNode> closedList = new();
-
-        openList.Add(grid[from.Z, from.X]);
+        BinaryHeap<PathfindingNode> openSet = new(MaxPathDistance * 8);
+        HashSet<PathfindingNode> closedSet = new();
+        
+        openSet.Add(grid[from.Z, from.X]);
 
         int count = 0;
-        while(count++ < MaxPathDistance)
+        List<PathfindingNode> neighbourList = new(8);
+        while (count++ < MaxPathDistance)
         {
-            // コストが一番低いノードを選択
-            PathfindingNode current = openList.OrderBy(node => node.ActualCost + node.EstimateCost)
-                .ThenBy(node => node.ActualCost).FirstOrDefault();
-
-            // 現在のノードをopenからcloseへ
-            openList.Remove(current);
-            closedList.Add(current);
+            PathfindingNode current = openSet.Pop();
+            closedSet.Add(current);
 
             // 目的地に到着した場合
             if (current.Z == to.Z && current.X == to.X)
@@ -37,28 +33,28 @@ public class PathfindingTask
             }
 
             // 周囲8つ
-            List<PathfindingNode> neighbourList = new(8);
+            neighbourList.Clear();
             GetNeighbour(current.Z, current.X, neighbourList, grid);
 
             // 周囲8つのノードのコストを計算
             foreach (PathfindingNode neighbour in neighbourList)
             {
                 // closeのリストに含まれていたら省く
-                if (closedList.Contains(neighbour)) continue;
+                if (closedSet.Contains(neighbour)) continue;
 
-                // 隣のノードまでのユークリッド距離を実コストのとする
+                // 隣のノードまでのユークリッド距離を実コストとする
                 int additionalCost = CalcDistance(neighbour.Z, neighbour.X, current.Z, current.X);
                 int neighbourActualCost = current.ActualCost + additionalCost;
 
                 // openなリストに含まれていないもしくは実コストがより低い場合はノードを更新する
-                bool unContains = !openList.Contains(neighbour);
+                bool unContains = !openSet.Contains(neighbour);
                 if (neighbourActualCost < neighbour.ActualCost || unContains)
                 {
                     neighbour.ActualCost = neighbourActualCost;
                     neighbour.EstimateCost = CalcDistance(neighbour.Z, neighbour.X, to.Z, to.X);
                     neighbour.Parent = current;
 
-                    if (unContains) openList.Add(neighbour);
+                    if (unContains) openSet.Add(neighbour);
                 }
             }
         }
@@ -87,9 +83,9 @@ public class PathfindingTask
             for(int k = -1; k <= 1; k++)
             {
                 if (i == 0 && k == 0) continue;
-                if (!grid[z + i, x + k].IsPassable) continue;
                 if (z + i < 0 || grid.GetLength(0) <= z + i ||
                     x + k < 0 || grid.GetLength(1) <= x + k) continue;
+                if (!grid[z + i, x + k].IsPassable) continue;
 
                 list.Add(grid[z + i, x + k]);
             }
