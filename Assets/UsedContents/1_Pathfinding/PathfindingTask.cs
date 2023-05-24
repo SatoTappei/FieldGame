@@ -12,7 +12,7 @@ public class PathfindingTask
     /// </summary>
     static readonly int MaxPathDistance = 100;
 
-    public Queue<Vector3> Execute(PathfindingNode to, PathfindingNode from, PathfindingNode[,] grid)
+    public Stack<Vector3> Execute(PathfindingNode to, PathfindingNode from, PathfindingNode[,] grid)
     {
         List<PathfindingNode> openList = new();
         List<PathfindingNode> closedList = new();
@@ -30,18 +30,10 @@ public class PathfindingTask
             openList.Remove(current);
             closedList.Add(current);
 
-            // 目的地に到着した
+            // 目的地に到着した場合
             if (current.Z == to.Z && current.X == to.X)
             {
-                PathfindingNode goalNode = current;
-                Queue<Vector3> path = new();
-                while (goalNode.Parent != from)
-                {
-                    path.Enqueue(goalNode.Pos);
-                    goalNode = goalNode.Parent;
-                }
-
-                return path;
+                return TraceParent(to, from);
             }
 
             // 周囲8つ
@@ -54,25 +46,38 @@ public class PathfindingTask
                 // closeのリストに含まれていたら省く
                 if (closedList.Contains(neighbour)) continue;
 
+                // 隣のノードまでのユークリッド距離を実コストのとする
                 int additionalCost = CalcDistance(neighbour.Z, neighbour.X, current.Z, current.X);
                 int neighbourActualCost = current.ActualCost + additionalCost;
 
-                bool already = openList.Contains(neighbour);
-                if (neighbourActualCost < neighbour.ActualCost || !already)
+                // openなリストに含まれていないもしくは実コストがより低い場合はノードを更新する
+                bool unContains = !openList.Contains(neighbour);
+                if (neighbourActualCost < neighbour.ActualCost || unContains)
                 {
                     neighbour.ActualCost = neighbourActualCost;
                     neighbour.EstimateCost = CalcDistance(neighbour.Z, neighbour.X, to.Z, to.X);
                     neighbour.Parent = current;
 
-                    if (!already)
-                    {
-                        openList.Add(neighbour);
-                    }
+                    if (unContains) openList.Add(neighbour);
                 }
             }
         }
 
+        Debug.LogWarning($"{from.Pos}から{to.Pos}への経路探索に失敗");
         return null;
+    }
+
+    Stack<Vector3> TraceParent(PathfindingNode to, PathfindingNode from)
+    {
+        PathfindingNode goalNode = to;
+        Stack<Vector3> path = new();
+        while (goalNode != from)
+        {
+            path.Push(goalNode.Pos);
+            goalNode = goalNode.Parent;
+        }
+
+        return path;
     }
 
     void GetNeighbour(int z, int x, List<PathfindingNode> list, PathfindingNode[,] grid)
@@ -82,14 +87,11 @@ public class PathfindingTask
             for(int k = -1; k <= 1; k++)
             {
                 if (i == 0 && k == 0) continue;
-
+                if (!grid[z + i, x + k].IsPassable) continue;
                 if (z + i < 0 || grid.GetLength(0) <= z + i ||
                     x + k < 0 || grid.GetLength(1) <= x + k) continue;
 
-                if (grid[z + i, x + k].IsPassable)
-                {
-                    list.Add(grid[z + i, x + k]);
-                }
+                list.Add(grid[z + i, x + k]);
             }
         }
     }

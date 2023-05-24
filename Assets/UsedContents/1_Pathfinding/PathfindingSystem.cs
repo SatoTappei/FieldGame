@@ -12,7 +12,7 @@ public class PathfindingSystem : MonoBehaviour
     [SerializeField] PathfindingGrid _pathfindingGrid;
 
     PathfindingTask pathfindingTask = new();
-    Queue<Vector3> _path = new();
+    Stack<Vector3> _path = new();
 
     void Start()
     {
@@ -26,16 +26,24 @@ public class PathfindingSystem : MonoBehaviour
     /// <summary>
     /// プレイヤーへの経路を探索したいときに外部から呼び出すメソッド
     /// </summary>
-    public Queue<Vector3> GetPath(Vector3 pos)
+    public Stack<Vector3> GetPath(Vector3 pos)
     {
+#if UNITY_EDITOR
+        System.Diagnostics.Stopwatch stopWatch = new();
+        stopWatch.Start();
+#endif
+
         PathfindingNode toNode = _pathfindingGrid.GetNode(_player.position);
         PathfindingNode fromNode = _pathfindingGrid.GetNode(pos);
+
+        if (toNode == null || fromNode == null) return null;
+
         _path = pathfindingTask.Execute(toNode, fromNode, _pathfindingGrid.Grid);
 
-        if (_path == null)
-        {
-            Debug.LogWarning("プレイヤーへの経路の探索に失敗: " + pos);
-        }
+#if UNITY_EDITOR
+        stopWatch.Stop();
+        Debug.Log($"経路探索にかかった時間: {stopWatch.Elapsed} ms");
+#endif
 
         return _path;
     }

@@ -154,6 +154,7 @@ public class PathfindingGrid
             return Grid[indexZ, indexX];
         }
 
+        Debug.Log("ノードがグリッドの範囲外なのでnullを返す: " + pos);
         _gizmosHighlightNodePos = null;
         return null;
     }
