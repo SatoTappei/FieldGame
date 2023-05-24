@@ -33,8 +33,7 @@ public class PathfindingNode : IBinaryHeapCollectable<PathfindingNode>
             result = EstimateCost.CompareTo(other.EstimateCost);
         }
 
-        // ƒRƒXƒg‚ª¬‚³‚¢•û‚ª—~‚µ‚¢‚Ì‚Å•Ô‚·Û‚É-1‚ğæZ‚·‚é
-        return -result;
+        return result;
     }
 }
 

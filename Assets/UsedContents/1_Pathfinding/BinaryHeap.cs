@@ -62,7 +62,7 @@ public class BinaryHeap<T> where T : IBinaryHeapCollectable<T>
         {
             // 比較して親と交換する
             T parent = _values[parentIndex];
-            if (value.CompareTo(parent) > 0)
+            if (value.CompareTo(parent) < 0)
             {
                 Swap(value, parent);
             }
@@ -94,14 +94,14 @@ public class BinaryHeap<T> where T : IBinaryHeapCollectable<T>
                 if (rightChildIndex < Count)
                 {
                     // 右の子が左の子より大きい場合はこちらと交換する
-                    if (_values[leftChildIndex].CompareTo(_values[rightChildIndex]) < 0)
+                    if (_values[leftChildIndex].CompareTo(_values[rightChildIndex]) > 0)
                     {
                         swapIndex = rightChildIndex;
                     }
                 }
 
                 // 左右どちらかの子と交換
-                if (value.CompareTo(_values[swapIndex]) < 0)
+                if (value.CompareTo(_values[swapIndex]) > 0)
                 {
                     Swap(value, _values[swapIndex]);
                 }
