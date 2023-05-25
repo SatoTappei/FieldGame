@@ -33,9 +33,8 @@ public class BinaryHeap<T> where T : IBinaryHeapCollectable<T>
     public void Add(T value)
     {
         value.BinaryHeapIndex = Count;
-        _values[Count] = value;
+        _values[Count++] = value;
         SortUp(value);
-        Count++;
     }
 
     /// <summary>
@@ -43,8 +42,10 @@ public class BinaryHeap<T> where T : IBinaryHeapCollectable<T>
     /// </summary>
     public T Pop()
     {
+        // 要素が無い時に取得しようとした場合は規定値を返す
+        if (--Count < 0) return default;
+
         T value = _values[0];
-        Count--;
         _values[0] = _values[Count];
         _values[0].BinaryHeapIndex = 0;
         SortDown(_values[0]);
@@ -58,21 +59,12 @@ public class BinaryHeap<T> where T : IBinaryHeapCollectable<T>
     {
         int parentIndex = (value.BinaryHeapIndex - 1) / 2;
 
-        while (true)
+        // 比較して親と交換する
+        T parent = _values[parentIndex];
+        if (value.CompareTo(parent) < 0)
         {
-            // 比較して親と交換する
-            T parent = _values[parentIndex];
-            if (value.CompareTo(parent) < 0)
-            {
-                Swap(value, parent);
-            }
-            else
-            {
-                break;
-            }
-
-            // Swap()で添え字も交換しているので、交換後の位置の親の添え字になる
-            parentIndex = (value.BinaryHeapIndex - 1) / 2;
+            Swap(value, parent);
+            SortUp(value);
         }
     }
 
@@ -81,39 +73,24 @@ public class BinaryHeap<T> where T : IBinaryHeapCollectable<T>
     /// </summary>
     void SortDown(T value)
     {
-        while (true)
+        int leftChildIndex = value.BinaryHeapIndex * 2 + 1;
+        int rightChildIndex = value.BinaryHeapIndex * 2 + 2;
+
+        // 左の子ノードを指す添え字が木の要素数以上なら処理をしない
+        if (leftChildIndex >= Count) return;
+        
+        int swapIndex = leftChildIndex;
+        // 右の子が左の子より大きい場合はこちらと交換する
+        if (rightChildIndex < Count && _values[leftChildIndex].CompareTo(_values[rightChildIndex]) > 0)
         {
-            int leftChildIndex = value.BinaryHeapIndex * 2 + 1;
-            int rightChildIndex = value.BinaryHeapIndex * 2 + 2;
+            swapIndex = rightChildIndex;
+        }
 
-            // 左の子ノードが木の中にある場合はソートの処理を行う
-            if (leftChildIndex < Count)
-            {
-
-                int swapIndex = leftChildIndex;
-                if (rightChildIndex < Count)
-                {
-                    // 右の子が左の子より大きい場合はこちらと交換する
-                    if (_values[leftChildIndex].CompareTo(_values[rightChildIndex]) > 0)
-                    {
-                        swapIndex = rightChildIndex;
-                    }
-                }
-
-                // 左右どちらかの子と交換
-                if (value.CompareTo(_values[swapIndex]) > 0)
-                {
-                    Swap(value, _values[swapIndex]);
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
-            }
+        // 子より大きければ交換する
+        if (value.CompareTo(_values[swapIndex]) > 0)
+        {
+            Swap(value, _values[swapIndex]);
+            SortDown(value);
         }
     }
 

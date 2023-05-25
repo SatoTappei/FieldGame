@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -14,16 +13,22 @@ public class PathfindingTask
 
     public Stack<Vector3> Execute(PathfindingNode to, PathfindingNode from, PathfindingNode[,] grid)
     {
-        BinaryHeap<PathfindingNode> openSet = new(MaxPathDistance * 8);
+        BinaryHeap<PathfindingNode> openHeap = new(MaxPathDistance * 8);
         HashSet<PathfindingNode> closedSet = new();
         
-        openSet.Add(grid[from.Z, from.X]);
+        openHeap.Add(grid[from.Z, from.X]);
 
         int count = 0;
         List<PathfindingNode> neighbourList = new(8);
         while (count++ < MaxPathDistance)
         {
-            PathfindingNode current = openSet.Pop();
+            PathfindingNode current = openHeap.Pop();
+            if (current == default)
+            {
+                Debug.LogWarning($"{from.Pos}から{to.Pos}にたどり着く経路が無い");
+                return null;
+            }
+
             closedSet.Add(current);
 
             // 目的地に到着した場合
@@ -47,19 +52,19 @@ public class PathfindingTask
                 int neighbourActualCost = current.ActualCost + additionalCost;
 
                 // openなリストに含まれていないもしくは実コストがより低い場合はノードを更新する
-                bool unContains = !openSet.Contains(neighbour);
+                bool unContains = !openHeap.Contains(neighbour);
                 if (neighbourActualCost < neighbour.ActualCost || unContains)
                 {
                     neighbour.ActualCost = neighbourActualCost;
                     neighbour.EstimateCost = CalcDistance(neighbour.Z, neighbour.X, to.Z, to.X);
                     neighbour.Parent = current;
 
-                    if (unContains) openSet.Add(neighbour);
+                    if (unContains) openHeap.Add(neighbour);
                 }
             }
         }
 
-        Debug.LogWarning($"{from.Pos}から{to.Pos}への経路探索に失敗");
+        Debug.LogWarning($"{from.Pos}から{to.Pos}への経路は計算時間が許容外");
         return null;
     }
 
@@ -78,17 +83,28 @@ public class PathfindingTask
 
     void GetNeighbour(int z, int x, List<PathfindingNode> list, PathfindingNode[,] grid)
     {
-        for(int i = -1; i <= 1; i++)
+        (int i, int k)[] dirs =
         {
-            for(int k = -1; k <= 1; k++)
-            {
-                if (i == 0 && k == 0) continue;
-                if (z + i < 0 || grid.GetLength(0) <= z + i ||
-                    x + k < 0 || grid.GetLength(1) <= x + k) continue;
-                if (!grid[z + i, x + k].IsPassable) continue;
+            (-1, -1),
+            (-1, 0),
+            (-1, 1),
+            (0, -1),
+            (0, 1),
+            (1, -1),
+            (1, 0),
+            (1, 1),
+        };
 
-                list.Add(grid[z + i, x + k]);
-            }
+        foreach((int i, int k) dir in dirs)
+        {
+            int i = dir.i;
+            int k = dir.k;
+
+            if (z + i < 0 || grid.GetLength(0) <= z + i ||
+                x + k < 0 || grid.GetLength(1) <= x + k) continue;
+            if (!grid[z + i, x + k].IsPassable) continue;
+
+            list.Add(grid[z + i, x + k]);
         }
     }
 

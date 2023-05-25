@@ -25,6 +25,10 @@ public class PathfindingNode : IBinaryHeapCollectable<PathfindingNode>
     public bool IsPassable { get; set; }
 
     public int BinaryHeapIndex { get; set; }
+    /// <summary>
+    /// コストが大きいかどうかの結果を返しているので
+    /// 最小のコストでソートしたい場合は結果を反転する必要がある
+    /// </summary>
     public int CompareTo(PathfindingNode other)
     {
         int result = TotalCost.CompareTo(other.TotalCost);

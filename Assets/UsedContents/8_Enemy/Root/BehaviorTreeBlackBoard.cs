@@ -76,7 +76,7 @@ public class BehaviorTreeBlackBoard
     }
 
     /// <summary>
-    /// EnemyHealthModuleが読み取って計算して書き込む
+    /// EnemyLifePointModuleが読み取って計算して書き込む
     /// 各ノードでは読み取りしかしない
     /// </summary>
     public int LifePoint { get => _lifePoint; set => _lifePoint = value; }

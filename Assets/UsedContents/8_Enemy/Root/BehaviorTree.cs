@@ -29,6 +29,8 @@ public class BehaviorTree : MonoBehaviour
             .TakeWhile(_ => _blackBoard.LifePoint > 0)
             .DoOnCompleted(() => 
             {
+                // Playモード終了時に発行されるOnCompleted()を防ぐ
+                if (_blackBoard.LifePoint > 0) return;
                 // 撃破された場合は非表示にしてエフェクトを生成する
                 gameObject.SetActive(false);
                 _performanceModule.Defeated(transform.position);

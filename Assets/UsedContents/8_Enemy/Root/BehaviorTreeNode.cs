@@ -51,7 +51,7 @@ public abstract class BehaviorTreeNode
         }
 
 #if UNITY_EDITOR
-        Debug.Log(NodeName + "‚ğÀs’†");
+        //Debug.Log(NodeName + "‚ğÀs’†");
 #endif
 
         _currentState = OnStay();

@@ -16,7 +16,6 @@ public class PathfindingSystem : MonoBehaviour
 
     void Start()
     {
-        _player = GameObject.FindGameObjectWithTag("Player").transform;
         _pathfindingGrid.InitOnStart();
 
         // 毎フレームプレイヤーを中心にグリッドを生成する
