@@ -47,21 +47,21 @@ public class BehaviorTreeBlackBoard
     public float MoveSpeed => _moveSpeed;
     public float RotSpeed => _rotSpeed;
 
-    Queue<Vector3> _path;
+    Stack<Vector3> _path;
 
     /// <summary>
     /// 経路探索した結果のPathをノードから読み書きする
     /// Vector3で保持しているのでA*以外にも対応している
     /// </summary>
-    public Queue<Vector3> Path
+    public Stack<Vector3> Path
     {
         get
         {
             if (_path == null)
             {
                 Debug.LogWarning("Pathがnullなので現在地の座標に移動するPathを作成して返した");
-                Queue<Vector3> path = new();
-                path.Enqueue(Transform.position);
+                Stack<Vector3> path = new();
+                path.Push(Transform.position);
                 return path;
             }
             else

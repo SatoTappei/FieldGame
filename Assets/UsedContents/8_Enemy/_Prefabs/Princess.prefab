@@ -1400,7 +1400,7 @@ Transform:
   m_Children:
   - {fileID: 8114548726224106882}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &91192561032855431
 Animator:
@@ -1489,7 +1489,7 @@ MonoBehaviour:
     _transform: {fileID: 8055243079559533309}
     _model: {fileID: 8114548726224106882}
     _rigidbody: {fileID: 91192561032855429}
-    _fireParticle: {fileID: 8240723120503342734}
+    _fireParticle: {fileID: 8874873220222286432}
     _playerLayer:
       serializedVersion: 2
       m_Bits: 128
@@ -2185,6 +2185,42 @@ PrefabInstance:
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7780578529251033832, guid: 4ddee5261e344774a885f3d556983ad6, type: 3}
+      propertyPath: m_Flip.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7780578529251033832, guid: 4ddee5261e344774a885f3d556983ad6, type: 3}
+      propertyPath: m_Flip.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7780647921300095088, guid: 4ddee5261e344774a885f3d556983ad6, type: 3}
+      propertyPath: m_Flip.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781761189345108706, guid: 4ddee5261e344774a885f3d556983ad6, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781761189345108706, guid: 4ddee5261e344774a885f3d556983ad6, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781761189345108706, guid: 4ddee5261e344774a885f3d556983ad6, type: 3}
+      propertyPath: UVModule.flipV
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7782043429128675908, guid: 4ddee5261e344774a885f3d556983ad6, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7782043429128675908, guid: 4ddee5261e344774a885f3d556983ad6, type: 3}
+      propertyPath: UVModule.flipU
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7782043429128675908, guid: 4ddee5261e344774a885f3d556983ad6, type: 3}
+      propertyPath: UVModule.flipV
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2195,8 +2231,8 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3002648561850828594, guid: 4ddee5261e344774a885f3d556983ad6, type: 3}
   m_PrefabInstance: {fileID: 1213646150107650178}
   m_PrefabAsset: {fileID: 0}
---- !u!198 &8240723120503342734 stripped
+--- !u!198 &8874873220222286432 stripped
 ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 7100860196798111244, guid: 4ddee5261e344774a885f3d556983ad6, type: 3}
+  m_CorrespondingSourceObject: {fileID: 7781761189345108706, guid: 4ddee5261e344774a885f3d556983ad6, type: 3}
   m_PrefabInstance: {fileID: 1213646150107650178}
   m_PrefabAsset: {fileID: 0}

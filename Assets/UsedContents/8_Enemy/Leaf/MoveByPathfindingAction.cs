@@ -31,7 +31,7 @@ public class MoveByPathfindingAction : BehaviorTreeNode
 
     protected override void OnEnter()
     {
-        _targetPos = BlackBoard.Path.Dequeue();
+        _targetPos = BlackBoard.Path.Pop();
         _playerDetectTimer = 0;
         _timeUpTimer = 0;
     }
@@ -63,7 +63,7 @@ public class MoveByPathfindingAction : BehaviorTreeNode
         if ((_targetPos - BlackBoard.Transform.position).sqrMagnitude <= Approximately)
         {
             // 黒板が保持している経路から次の地点を取得出来なかった場合は移動完了なので成功を返す
-            if (!BlackBoard.Path.TryDequeue(out _targetPos)) return State.Success;
+            if (!BlackBoard.Path.TryPop(out _targetPos)) return State.Success;
         }
         else
         {

@@ -42,6 +42,9 @@ public class PlayerFireBehavior : IInputActionRegistrable
             _time = 0;
             GameManager.Instance.AudioModule.PlaySE(AudioType.SE_Fire);
             _fireParticle.Play();
+
+            // TODO:弾のコライダーを撃ちだす
+            // ECS側でエフェクトを合わせる必要がある
         }
     }
 }

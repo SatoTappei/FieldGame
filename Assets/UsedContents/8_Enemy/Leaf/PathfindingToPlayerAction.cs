@@ -21,7 +21,7 @@ public class PathfindingToPlayerAction : BehaviorTreeNode
     protected override State OnStay()
     {
         // Œo˜H’Tõ‚ÌƒNƒ‰ƒX‚Å‹‚ß‚½Œo˜H‚ğ•”Â‚É‘‚«‚Ş
-        Queue<Vector3> path = TempPathfindingSystem.Instance.GetPath(BlackBoard.Transform.position);
+        Stack<Vector3> path = PathfindingManager.Instance.GetPath(BlackBoard.Transform.position);
         BlackBoard.Path = path;
 
         return State.Success;
