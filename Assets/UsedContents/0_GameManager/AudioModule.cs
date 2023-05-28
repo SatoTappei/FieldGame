@@ -7,7 +7,9 @@ using UnityEngine;
 /// </summary>
 public enum AudioType
 {
-    SE_Fire
+    SE_Fire,
+    SE_ButtonSubmit,
+    SE_ButtonSelect,
 }
 
 /// <summary>

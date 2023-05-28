@@ -20,6 +20,8 @@ public class PathfindingSystem : MonoBehaviour
 
         // 毎フレームプレイヤーを中心にグリッドを生成する
         this.UpdateAsObservable().Subscribe(_ => _pathfindingGrid.Create(_player));
+        // JobSystem用に確保してあるNativeArrayを開放する
+        this.OnDestroyAsObservable().Subscribe(_ => _pathfindingGrid.Dispose());
     }
 
     /// <summary>

@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] PlayerFireBehavior _playerFireBehavior;
     [SerializeField] PlayerMoveBehavior _playerMoveBehavior;
     [SerializeField] CameraControlModule _cameraControlModule;
-    InputActionRegister _inputActionRegister;
+    PlayerInputRegister _inputActionRegister;
     Transform _transform;
 
     void Awake()
@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
 
     void InitOnAwake()
     {
-        _inputActionRegister = new InputActionRegister();
+        _inputActionRegister = new PlayerInputRegister();
         _playerMoveBehavior.RegisterInputAction(_inputActionRegister);
         _playerFireBehavior.RegisterInputAction(_inputActionRegister);
         _cameraControlModule.RegisterInputAction(_inputActionRegister);

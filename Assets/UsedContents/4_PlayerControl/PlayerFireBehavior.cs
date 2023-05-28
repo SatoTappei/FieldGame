@@ -17,7 +17,7 @@ public class PlayerFireBehavior : IInputActionRegistrable
     /// </summary>
     bool _isFiring;
 
-    public void RegisterInputAction(InputActionRegister register)
+    public void RegisterInputAction(PlayerInputRegister register)
     {
         register.OnFire += () => OpenFire();
         register.OnFireCanceled += () => _isFiring = false;

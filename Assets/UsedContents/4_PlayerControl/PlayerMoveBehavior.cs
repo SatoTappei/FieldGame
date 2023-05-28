@@ -25,7 +25,7 @@ public class PlayerMoveBehavior : IInputActionRegistrable
     /// </summary>
     bool _isRunning;
 
-    public void RegisterInputAction(InputActionRegister register)
+    public void RegisterInputAction(PlayerInputRegister register)
     {
         register.OnMove += UpdateNormalizedDirection;
         register.OnMoveCanceled += UpdateNormalizedDirection;

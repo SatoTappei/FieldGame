@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Jobs;
 using Unity.Collections;
+using System;
 
 /// <summary>
 /// グリッドに敷き詰められるノードのクラス
@@ -45,7 +46,7 @@ public class PathfindingNode : IBinaryHeapCollectable<PathfindingNode>
 /// 経路探索で使用するグリッドのクラス
 /// </summary>
 [System.Serializable]
-public class PathfindingGrid
+public class PathfindingGrid : IDisposable
 {
     /// <summary>
     /// 理由がない限り1で固定。オブジェクト側が大きさを合わせれば良い
@@ -77,6 +78,9 @@ public class PathfindingGrid
     /// </summary>
     Vector3? _gizmosHighlightNodePos;
 
+    NativeArray<RaycastHit> _hits;
+    NativeArray<SpherecastCommand> _commands;
+
     /// <summary>
     /// グリッドを何回も生成しなおすことを考慮して別途初期化用のメソッドを使用する
     /// </summary>
@@ -90,6 +94,9 @@ public class PathfindingGrid
                 Grid[i, k] = new PathfindingNode(Vector3.zero, i, k, true);
             }
         }
+
+        _hits = new(_height * _width, Allocator.Persistent);
+        _commands = new(_height * _width, Allocator.Persistent);
     }
 
     /// <summary>
@@ -98,8 +105,8 @@ public class PathfindingGrid
     /// </summary>
     public void Create(Transform transform)
     {
-        NativeArray<RaycastHit> hits = new(_height * _width, Allocator.TempJob);
-        NativeArray<SpherecastCommand> commands = new(_height * _width, Allocator.TempJob);
+        //NativeArray<RaycastHit> hits = new(_height * _width, Allocator.TempJob);
+        //NativeArray<SpherecastCommand> commands = new(_height * _width, Allocator.TempJob);
         
         for (int i = 0; i < _height; i++)
         {
@@ -115,7 +122,7 @@ public class PathfindingGrid
                 // 障害物を検知するためのRayを飛ばすための設定
                 pos.y += _obstacleRayOriginY;
                 QueryParameters queryParams = new() { layerMask = _obstacleLayer };
-                commands[_height * i + k] = new SpherecastCommand()
+                _commands[_height * i + k] = new SpherecastCommand()
                 {
                     origin = pos,
                     direction = Vector3.down,
@@ -126,20 +133,20 @@ public class PathfindingGrid
             }
         }
 
-        JobHandle handle = SpherecastCommand.ScheduleBatch(commands, hits, _commandsPerJob, default(JobHandle));
+        JobHandle handle = SpherecastCommand.ScheduleBatch(_commands, _hits, _commandsPerJob, default(JobHandle));
         handle.Complete();
 
         // ジョブの結果を反映してそのノードが通行可能か判定する
-        for (int i = 0; i < hits.Length; i++)
+        for (int i = 0; i < _hits.Length; i++)
         {
             int iz = i / _width;
             int ix = i % _height;
 
-            Grid[iz, ix].IsPassable = hits[i].collider == null;
+            Grid[iz, ix].IsPassable = _hits[i].collider == null;
         }
 
-        hits.Dispose();
-        commands.Dispose();
+        //_hits.Dispose();
+        //_commands.Dispose();
     }
 
     /// <summary>
@@ -199,5 +206,11 @@ public class PathfindingGrid
                 Gizmos.DrawCube((Vector3)_gizmosHighlightNodePos, Vector3.one * NodeSize * NodeGizmoViewMag);
             }
         }
+    }
+
+    public void Dispose()
+    {
+        _hits.Dispose();
+        _commands.Dispose();
     }
 }

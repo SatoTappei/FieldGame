@@ -4,5 +4,5 @@
 /// </summary>
 public interface IInputActionRegistrable
 {
-    public void RegisterInputAction(InputActionRegister register);
+    public void RegisterInputAction(PlayerInputRegister register);
 }

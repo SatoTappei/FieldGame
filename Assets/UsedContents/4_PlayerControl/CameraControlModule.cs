@@ -42,7 +42,7 @@ public class CameraControlModule : IInputActionRegistrable
     /// </summary>
     public CameraMode CurrentCameraMode { get; private set; }
 
-    public void RegisterInputAction(InputActionRegister register)
+    public void RegisterInputAction(PlayerInputRegister register)
     {
         register.OnCameraMove += UpdateNormalizedDirection;
         register.OnCameraMoveCanceled += UpdateNormalizedDirection;
