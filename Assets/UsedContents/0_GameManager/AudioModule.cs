@@ -10,6 +10,7 @@ public enum AudioType
     SE_Fire,
     SE_ButtonSubmit,
     SE_ButtonSelect,
+    SE_PlayerDamage,
 }
 
 /// <summary>

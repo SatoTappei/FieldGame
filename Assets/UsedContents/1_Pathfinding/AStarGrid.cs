@@ -27,8 +27,7 @@ public class AStarNode : IBinaryHeapCollectable<AStarNode>
 
     public int BinaryHeapIndex { get; set; }
     /// <summary>
-    /// コストが大きいかどうかの結果を返しているので
-    /// 最小のコストでソートしたい場合は結果を反転する必要がある
+    /// 昇順で値を持ちたい場合はHeap側で結果を反転する必要がある
     /// </summary>
     public int CompareTo(AStarNode other)
     {

@@ -1,15 +1,24 @@
 using UnityEngine;
+using System;
 
 /// <summary>
 /// プレイヤーの攻撃に関する処理を行うクラス
 /// </summary>
 [System.Serializable]
-public class PlayerFireBehavior : IInputActionRegistrable
+public class PlayerFireBehavior : IInputActionRegistrable, IDisposable
 {
+    [Header("発射する弾用")]
+    [SerializeField] Transform _model;
+    [SerializeField] Transform _muzzle;
     [Header("攻撃のレート")]
     [SerializeField] float _attackRate = 0.33f;
     [Header("攻撃時に再生するParticle")]
     [SerializeField] ParticleSystem _fireParticle;
+    [Header("プレイヤーの弾のプーリング")]
+    [SerializeField] PlayerBullet _playerBullet;
+    [SerializeField] Transform _pool;
+
+    PlayerBulletPool _bulletPool;
 
     float _time;
     /// <summary>
@@ -21,6 +30,11 @@ public class PlayerFireBehavior : IInputActionRegistrable
     {
         register.OnFire += () => OpenFire();
         register.OnFireCanceled += () => _isFiring = false;
+    }
+
+    public void InitOnAwake()
+    {
+        _bulletPool = new(_playerBullet, _pool);
     }
 
     /// <summary>
@@ -45,6 +59,14 @@ public class PlayerFireBehavior : IInputActionRegistrable
 
             // TODO:弾のコライダーを撃ちだす
             // ECS側でエフェクトを合わせる必要がある
+
+            PlayerBullet bullet = _bulletPool.Rent();
+            bullet.OnRent(_model, _muzzle.position);
         }
+    }
+
+    public void Dispose()
+    {
+        _bulletPool.Clear();
     }
 }

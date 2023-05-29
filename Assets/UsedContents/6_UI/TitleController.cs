@@ -3,15 +3,6 @@ using UniRx;
 using UnityEngine;
 
 /// <summary>
-/// タイトルからインゲームに遷移させるために発行するメッセージ
-/// ゲームスタートボタンを押した際に送信される
-/// インゲーム開始時をトリガーしたい場合はこのメッセージを受信する
-/// </summary>
-struct ToInGameTrigger
-{
-}
-
-/// <summary>
 /// タイトル画面の制御を行うクラス
 /// </summary>
 public class TitleController : MonoBehaviour

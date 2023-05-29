@@ -3567,7 +3567,7 @@ Transform:
   - {fileID: 141318804520445492}
   - {fileID: 141318804251495235}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1384274609775513741
 Animator:
@@ -3652,8 +3652,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerFireBehavior:
+    _model: {fileID: 141318804520445492}
+    _muzzle: {fileID: 7910341299451028192}
     _attackRate: 0.16
     _fireParticle: {fileID: 8000697347474314158}
+    _playerBullet: {fileID: -63864057277648167, guid: c8895c2d201cc5d4a86df03ca471ce1d, type: 3}
+    _pool: {fileID: 0}
   _playerMoveBehavior:
     _speed: 5
     _runMag: 1.5

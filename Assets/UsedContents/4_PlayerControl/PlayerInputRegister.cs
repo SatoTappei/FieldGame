@@ -1,22 +1,7 @@
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UniRx;
-
-public struct InputTypeData
-{
-    public enum InputType
-    {
-        Player,
-        UI,
-    }
-
-    public InputTypeData(InputType type)
-    {
-        Type = type;
-    }
-
-    public InputType Type { get; }
-}
 
 /// <summary>
 /// プレイヤーの操作を登録する用のクラス
@@ -36,7 +21,7 @@ public class PlayerInputRegister
     public event UnityAction OnFocus;
     public event UnityAction OnFocusCanceled;
 
-    public PlayerInputRegister()
+    public PlayerInputRegister(GameObject gameObject)
     {
         _inputActions = new();
         _inputActions.Enable();
@@ -64,6 +49,6 @@ public class PlayerInputRegister
                 _inputActions.UI.Enable();
                 _inputActions.Player.Disable();
             }
-        });
+        }).AddTo(gameObject);
     }
 }

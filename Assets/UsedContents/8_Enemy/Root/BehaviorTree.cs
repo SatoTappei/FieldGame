@@ -17,9 +17,6 @@ public class BehaviorTree : MonoBehaviour
 
     void Awake()
     {
-        _animationModule.InitOnAwake();
-        _lifePointModule.InitOnAwake(transform, _blackBoard);
-
         // Treeを作成する
         RootNode rootNode = new();
         rootNode.AddChild(CreateTree());
@@ -37,7 +34,10 @@ public class BehaviorTree : MonoBehaviour
             })
             .Subscribe(_ => rootNode.Update());
 
-        // ダメージを受けた際の処理をコールバックに登録
+        // メッセージを受信して体力を減らすModuleとアニメーションのModuleを初期化後、
+        // ダメージを受けた際にアニメーションを再生する処理をコールバックに登録
+        _animationModule.InitOnAwake();
+        _lifePointModule.InitOnAwake(transform, _blackBoard);
         _lifePointModule.OnDamaged += () => _animationModule.Play(AnimType.Damaged);
         this.OnDisableAsObservable().Subscribe(_ =>
         {

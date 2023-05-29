@@ -8,8 +8,8 @@ using UnityEngine.Events;
 [System.Serializable]
 public class EnemyLifePointModule
 {
-    public UnityAction OnDamaged;
-    public UnityAction OnDefeated;
+    public event UnityAction OnDamaged;
+    public event UnityAction OnDefeated;
 
     /// <summary>
     /// ’e‚ªƒqƒbƒg‚µ‚½‚ç•”Â‚Ì‘Ì—Í‚Ì’l‚ğ‘‚«Š·‚¦‚é
@@ -17,7 +17,7 @@ public class EnemyLifePointModule
     public void InitOnAwake(Transform transform, BehaviorTreeBlackBoard blackBoard)
     {
         MessageBroker.Default.Receive<DamageData>()
-            .Where(data => transform.CompareTag(data.TargetTag))
+            .Where(data => transform.CompareTag(data.Tag))
             .Where(data => (data.HitPos - transform.position).sqrMagnitude < data.Range * data.Range)
             .Where(_ => blackBoard.LifePoint > 0)
             .Subscribe(_ => 
