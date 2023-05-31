@@ -42,14 +42,23 @@ public class PlayerMoveBehavior : IInputActionRegistrable
         Vector3 movement = cameraRot * _dir * Time.deltaTime * _speed * (_isRunning ? _runMag : 1);
         transform.Translate(movement);
 
-        // Freelook時にのみプレイヤーの回転を行う
+        // Freelook時には移動方向に向く
         if (mode == CameraMode.Freelook)
         {
-            if (movement != Vector3.zero)
-            {
-                Quaternion rot = Quaternion.LookRotation(cameraRot * _dir, Vector3.up);
-                _model.rotation = Quaternion.Lerp(_model.rotation, rot, Time.deltaTime * _rotSpeed);
-            }
+            if (movement == Vector3.zero) return;
+
+            Quaternion rot = Quaternion.LookRotation(cameraRot * _dir, Vector3.up);
+            _model.rotation = Quaternion.Lerp(_model.rotation, rot, Time.deltaTime * _rotSpeed);
+        }
+        // ADS時にはカメラの中央を向く
+        else if(mode == CameraMode.ADS)
+        {
+            if (Mathf.Approximately(_model.rotation.y, Camera.main.transform.rotation.y)) return;
+
+            Quaternion rot = Quaternion.AngleAxis(Camera.main.transform.eulerAngles.y, Vector3.up);
+            rot.x = 0;
+            rot.z = 0;
+            _model.rotation = Quaternion.Lerp(_model.rotation, rot, Time.deltaTime * _rotSpeed);
         }
     }
 

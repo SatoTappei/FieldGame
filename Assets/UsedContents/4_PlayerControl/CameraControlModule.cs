@@ -18,17 +18,16 @@ public enum CameraMode
 [System.Serializable]
 public class CameraControlModule : IInputActionRegistrable
 {
-    [Header("Y軸方向の回転を反映するオブジェクト")]
+    [Header("0:Freelook 1:ADS")]
+    [SerializeField] CinemachineVirtualCamera[] _cameras;
+    [Header("VCamがFollowしているカメラ操作で動かすオブジェクト")]
     [SerializeField] Transform _horiFollowTarget;
-    [Header("X軸方向の回転を反映するオブジェクト")]
     [SerializeField] Transform _vertFollowTarget;
     [Header("感度")]
     [SerializeField] int _sensitivity = 160;
     [Header("X軸方向の角度の範囲")]
     [SerializeField] float _angleMax = 45.0f;
     [SerializeField] float _angleMin = -45.0f;
-    [Header("0:Freelook 1:ADS")]
-    [SerializeField] CinemachineVirtualCamera[] _cameras;
     [Header("Freelookにした際に回転を読み取るオブジェクト")]
     [SerializeField] Transform _model;
 
@@ -52,6 +51,9 @@ public class CameraControlModule : IInputActionRegistrable
 
     public void Update()
     {
+        // ADS中はFreeLookカメラの操作をしない
+        if (CurrentCameraMode == CameraMode.ADS) return;
+
         // カメラ操作(水平)
         Vector3 cameraMovement = _dir * Time.deltaTime * _sensitivity;
         _horiFollowTarget.Rotate(new Vector3(0, cameraMovement.y, 0));
@@ -66,21 +68,18 @@ public class CameraControlModule : IInputActionRegistrable
 
     void SwitchCamera()
     {
+        // 使用するカメラの変更(カメラモードの切り替え)
         int index = (int)CurrentCameraMode;
-
-        // 使用するカメラの変更
         _cameras[index].Priority = 10;
         index = 1 - index;
         _cameras[index].Priority = 11;
-
-        // ADSからFreelookに戻るとき、カメラがズレないようにrotationをADSに合わせる
-        if (index == 0)
-        {
-            _vertFollowTarget.rotation = Quaternion.identity;
-            _horiFollowTarget.rotation = _model.rotation;
-        }
-
         CurrentCameraMode = (CameraMode)index;
+
+        // ADSに切り替わった際に縦方向の回転を0に戻す
+        if (CurrentCameraMode == CameraMode.ADS)
+        {
+            _vertFollowTarget.localEulerAngles = Vector3.zero;
+        }
     }
 
     /// <summary>
