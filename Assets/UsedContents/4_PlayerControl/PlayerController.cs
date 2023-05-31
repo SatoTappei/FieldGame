@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] CameraControlModule _cameraControlModule;
     [SerializeField] PlayerAnimModule _animModule;
     [SerializeField] PlayerLifePointModule _lifePointModule;
+    [SerializeField] PlayerAimRaycastModule _aimRaycastModule;
+
     PlayerInputRegister _inputActionRegister;
     Transform _transform;
 
@@ -22,27 +24,29 @@ public class PlayerController : MonoBehaviour
 
     void InitOnAwake()
     {
+        // InputSystemへの操作の登録
         _inputActionRegister = new PlayerInputRegister(gameObject);
         _playerMoveBehavior.RegisterInputAction(_inputActionRegister);
         _playerFireBehavior.RegisterInputAction(_inputActionRegister);
         _cameraControlModule.RegisterInputAction(_inputActionRegister);
         _animModule.RegisterInputAction(_inputActionRegister);
-
+        
+        // 各クラスの初期化
         _playerFireBehavior.InitOnAwake();
         _lifePointModule.InitOnAwake(transform);
 
         // ダメージを受けて体力が減少した際にダメージのアニメーションを再生する
-        _lifePointModule.CurrentLifePoint.Skip(1)
-            .Subscribe(_ => 
-            {
-                _animModule.PlayDamageAnim();
-                GameManager.Instance.AudioModule.PlaySE(AudioType.SE_PlayerDamage);
-            }).AddTo(gameObject);
+        _lifePointModule.CurrentLifePoint.Skip(1).Subscribe(_ => 
+        {
+            _animModule.PlayDamageAnim();
+            GameManager.Instance.AudioModule.PlaySE(AudioType.SE_PlayerDamage);
+        }).AddTo(gameObject);
 
         // ダメージを受けて体力が0になった際に死亡の演出を再生する
         _lifePointModule.CurrentLifePoint.Where(lifePoint => lifePoint == 0)
             .Subscribe(_ => Debug.Log("死亡")).AddTo(gameObject);
 
+        // 1フレーム毎の処理をしているのでオブジェクトを非表示にすれば正常に止まる
         this.UpdateAsObservable().Subscribe(_ => 
         {
             CameraMode mode = _cameraControlModule.CurrentCameraMode;
@@ -50,13 +54,20 @@ public class PlayerController : MonoBehaviour
             _playerFireBehavior.Update();
             _cameraControlModule.Update();
             _animModule.Update();
+            _aimRaycastModule.Update(mode);
         });
 
+        // ゲーム終了時にオブジェクトが破棄されるタイミングで後処理
         this.OnDestroyAsObservable().Subscribe(_ =>
         {
             _playerFireBehavior.Dispose();
         });
 
         _transform = transform;
+    }
+
+    void OnDrawGizmos()
+    {
+        _aimRaycastModule.Visualize();
     }
 }
