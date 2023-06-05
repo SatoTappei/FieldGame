@@ -59,6 +59,7 @@ public class PlayerFireBehavior : IInputActionRegistrable, IDisposable
 
             // TODO:弾のコライダーを撃ちだす
             // ECS側でエフェクトを合わせる必要がある
+            TriggerByMonoBroker.Instance.DebugAddShootData(_muzzle.position, _model.forward);
 
             PlayerBullet bullet = _bulletPool.Rent();
             bullet.OnRent(_model, _muzzle.position);

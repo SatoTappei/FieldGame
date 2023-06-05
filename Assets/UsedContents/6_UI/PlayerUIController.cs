@@ -11,7 +11,7 @@ public class PlayerUIController : MonoBehaviour
 
     void Awake()
     {
-        MessageBroker.Default.Receive<ToInGameTrigger>().Subscribe(_ => Active());
+        MessageBroker.Default.Receive<ToInGameTrigger>().Subscribe(_ => Active()).AddTo(gameObject);
         _lifePointGaugeModule.InitOnAwake(gameObject);
     }
 

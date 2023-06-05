@@ -25,6 +25,7 @@ public partial struct BulletMoveSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        // ’e‚ğˆÚ“®‚³‚¹‚é
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         float deltaTime = SystemAPI.Time.DeltaTime;
         new BulletMoveJob
@@ -46,7 +47,7 @@ public partial struct BulletMoveSystem : ISystem
     }
 
     /// <summary>
-    /// ’eˆÚ“®Job
+    /// •À—ñ‚Å’e‚ÌˆÚ“®‚ğs‚¤Job
     /// </summary>
     [BurstCompile]
     public partial struct BulletMoveJob : IJobEntity

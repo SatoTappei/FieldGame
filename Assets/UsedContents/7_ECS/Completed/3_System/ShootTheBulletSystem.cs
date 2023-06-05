@@ -75,9 +75,10 @@ public partial struct ShootTheBulletJob : IJobEntity
     void Execute(BulletHolderComponent holder)
     {
         Entity entity = _ecb.Instantiate(holder._prototype);
-        
+
         // SetComponentÇ≈í«â¡ÇµÇÊÇ§Ç∆Ç∑ÇÈÇ∆ÉGÉâÅ[Ç™èoÇÈ
-        _ecb.AddComponent(entity, new BulletSpeedComponent { _value = 5.0f });
+        _ecb.AddComponent(entity, new LocalToWorldTransform { Value = GetTransform(_pos) });
+        _ecb.AddComponent(entity, new BulletSpeedComponent { _value = 15.0f });
         _ecb.AddComponent(entity, new BulletDirectionComponent { _value = _dir });
     }
 
