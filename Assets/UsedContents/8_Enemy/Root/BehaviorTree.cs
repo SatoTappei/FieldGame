@@ -14,6 +14,7 @@ public class BehaviorTree : MonoBehaviour
     [SerializeField] EnemyAnimationModule _animationModule;
     [SerializeField] EnemyLifePointModule _lifePointModule;
     [SerializeField] EnemyPerformanceModule _performanceModule;
+    [SerializeField] EnemyLineModule _lineModule;
 
     void Awake()
     {
@@ -28,9 +29,10 @@ public class BehaviorTree : MonoBehaviour
             {
                 // Playモード終了時に発行されるOnCompleted()を防ぐ
                 if (_blackBoard.LifePoint > 0) return;
-                // 撃破された場合は非表示にしてエフェクトを生成する
+                // 撃破された場合は非表示にして死亡演出を行う
                 gameObject.SetActive(false);
                 _performanceModule.Defeated(transform.position);
+                _lineModule.SendDefeatedLineMessage();
             })
             .Subscribe(_ => rootNode.Update());
 

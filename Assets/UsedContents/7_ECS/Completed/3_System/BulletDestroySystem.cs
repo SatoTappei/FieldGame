@@ -15,11 +15,13 @@ public partial struct BulletDestroySystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        // 弾の速度を読み取るために、速度Componentを持ったEntityへの処理をするクエリを作成
         NativeArray<ComponentType> components = new NativeArray<ComponentType>(1, Allocator.Temp);
         components[0] = ComponentType.ReadOnly<BulletSpeedComponent>();
-
         _query = state.GetEntityQuery(components);
         components.Dispose();
+
+        state.RequireForUpdate<BulletSpeedComponent>();
     }
 
     [BurstCompile]
@@ -30,6 +32,7 @@ public partial struct BulletDestroySystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        // 速度が一定以下になったEntityを破壊
         var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
         NativeArray<Entity> entities = _query.ToEntityArray(Allocator.Temp);

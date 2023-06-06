@@ -57,23 +57,6 @@ public partial struct ShootTheBulletSystem : ISystem
             component._dir = float3.zero;
             SystemAPI.SetSingleton(component);
         }
-        #region Job未使用ver
-        //foreach (var holder in SystemAPI.Query<RefRO<BulletHolderAspect>())
-        //{
-        //    Entity entity = state.EntityManager.Instantiate(holder.ValueRO._entity);
-        //    state.EntityManager.SetComponentData(entity, new BulletSpeedComponent
-        //    {
-        //        _value = 5.0f
-        //    });
-        //    state.EntityManager.SetComponentData(entity, new BulletDirectionComponent
-        //    {
-        //        _value = new float3(0, 0, 1)
-        //    });
-
-        //    // TODO:ShootTriggerをオフにする処理が必要
-        //    //state.EntityManager.SetComponentEnabled<ShootTrigger>(holder, false);
-        //}
-        #endregion
     }
 
     UniformScaleTransform GetTransform(float3 pos)
@@ -97,7 +80,6 @@ public partial struct ShootTheBulletSystem : ISystem
         dir.y += ry;
         dir.z += rz;
 
-        // TODO:インクリメントしているのでuintの上限を越えた場合にバグるかもしれない
         random._seed++;
         random._value = Random.CreateFromIndex(random._seed);
         SystemAPI.SetSingleton(random);

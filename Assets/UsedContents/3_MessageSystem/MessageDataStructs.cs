@@ -69,3 +69,18 @@ public struct PlayerLifePointData
     public int BeforValue { get; }
     public int AfterValue { get; }
 }
+
+/// <summary>
+/// •\¦‚·‚é‘äŒ‚Ì\‘¢‘Ì
+/// </summary>
+public struct LineData
+{
+    public LineData(string name, string line)
+    {
+        Name = name;
+        Line = line;
+    }
+
+    public string Name { get; }
+    public string Line { get; }
+}
