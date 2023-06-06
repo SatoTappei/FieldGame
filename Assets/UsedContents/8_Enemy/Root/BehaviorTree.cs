@@ -31,6 +31,7 @@ public class BehaviorTree : MonoBehaviour
                 if (_blackBoard.LifePoint > 0) return;
                 // Œ‚”j‚³‚ê‚½ê‡‚Í”ñ•\¦‚É‚µ‚Ä€–S‰‰o‚ğs‚¤
                 gameObject.SetActive(false);
+                GameManager.Instance.AudioModule.PlaySE(AudioType.SE_Explosion);
                 _performanceModule.Defeated(transform.position);
                 _lineModule.SendDefeatedLineMessage();
             })

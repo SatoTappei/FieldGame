@@ -57,7 +57,8 @@ public class PlayerFireBehavior : IInputActionRegistrable, IDisposable
             GameManager.Instance.AudioModule.PlaySE(AudioType.SE_Fire);
             _fireParticle.Play();
 
-            TriggerByMonoBroker.Instance.AddShootData(_muzzle.position, _model.forward);
+            TriggerByMonoBroker.Instance.AddShootData(ShootData.BulletType.Player, 
+                _muzzle.position, _model.forward);
 
             PlayerBullet bullet = _bulletPool.Rent();
             bullet.OnRent(_model, _muzzle.position);

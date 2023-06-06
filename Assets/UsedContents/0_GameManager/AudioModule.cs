@@ -11,6 +11,7 @@ public enum AudioType
     SE_ButtonSubmit,
     SE_ButtonSelect,
     SE_PlayerDamage,
+    SE_Explosion,
 }
 
 /// <summary>

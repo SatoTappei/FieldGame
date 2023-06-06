@@ -13,8 +13,10 @@ public struct BulletDirectionComponent : IComponentData
 
 public struct BulletHolderComponent : IComponentData
 {
-    public Entity _prototype;
+    public Entity _playerPrototype;
+    public Entity _enemyPrototype;
 }
+
 
 public struct RandomValueComponent : IComponentData
 {
@@ -23,15 +25,13 @@ public struct RandomValueComponent : IComponentData
 }
 
 /// <summary>
-/// GameObject側からプレイヤーの弾を発射する際のデータを保持するComponent
+/// GameObject側から弾を発射する際のデータを保持するComponent
 /// Singletonで扱う
 /// </summary>
-public struct PlayerBulletSpawnComponent : IComponentData
+public struct BulletSpawnComponent : IComponentData
 {
     public float3 _pos;
     public float3 _dir;
-    /// <summary>
-    /// この値がtrueの場合は発射する
-    /// </summary>
+    public ShootData.BulletType _type;
     public bool _active;
 }

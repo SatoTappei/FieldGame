@@ -9,12 +9,12 @@ public partial class TriggerByMonoSystem : SystemBase
 {
     protected override void OnCreate()
     {
-        EntityManager.CreateSingleton<PlayerBulletSpawnComponent>();
+        EntityManager.CreateSingleton<BulletSpawnComponent>();
     }
 
     protected override void OnDestroy()
     {
-        Entity entity = SystemAPI.GetSingletonEntity<PlayerBulletSpawnComponent>();
+        Entity entity = SystemAPI.GetSingletonEntity<BulletSpawnComponent>();
         EntityManager.DestroyEntity(entity);
     }
 
@@ -23,10 +23,12 @@ public partial class TriggerByMonoSystem : SystemBase
         // 弾生成データを取得出来たらそのデータを設定する
         if (TriggerByMonoBroker.Instance.TryGetShootData(out ShootData data))
         {
-            PlayerBulletSpawnComponent component = SystemAPI.GetSingleton<PlayerBulletSpawnComponent>();
-            component._active = true;
+            BulletSpawnComponent component = SystemAPI.GetSingleton<BulletSpawnComponent>();
             component._pos = data.Pos;
             component._dir = data.Dir;
+            component._type = data.Type;
+            component._active = true;
+
             SystemAPI.SetSingleton(component);
         }
     }

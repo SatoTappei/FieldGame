@@ -17,7 +17,8 @@ public class FireAction : BehaviorTreeNode
     protected override State OnStay()
     {
         BlackBoard.FireParticle.Play();
-        TriggerByMonoBroker.Instance.AddShootData(BlackBoard.Transform.position, BlackBoard.Model.forward);
+        TriggerByMonoBroker.Instance.AddShootData(ShootData.BulletType.Enemy, 
+            BlackBoard.Transform.position, BlackBoard.Model.forward);
         return State.Success;
     }
 }

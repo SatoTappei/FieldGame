@@ -25,7 +25,7 @@ public partial struct ShootTheBulletSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        PlayerBulletSpawnComponent component = SystemAPI.GetSingleton<PlayerBulletSpawnComponent>();
+        BulletSpawnComponent component = SystemAPI.GetSingleton<BulletSpawnComponent>();
         if (component._active)
         {
             // 弾を生成
@@ -33,9 +33,19 @@ public partial struct ShootTheBulletSystem : ISystem
             var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
             BulletHolderComponent holder = SystemAPI.GetSingleton<BulletHolderComponent>();
 
+            Entity prototype;
+            if (component._type == ShootData.BulletType.Player)
+            {
+                prototype = holder._playerPrototype;
+            }
+            else
+            {
+                prototype = holder._enemyPrototype;
+            }
+
             for (int i = 0; i < 100; i++)
             {
-                Entity entity = ecb.Instantiate(i, holder._prototype);
+                Entity entity = ecb.Instantiate(i, prototype);
                 ecb.AddComponent(i, entity, new LocalToWorldTransform { Value = GetTransform(component._pos) });
                 ecb.AddComponent(i, entity, new BulletSpeedComponent { _value = 60.0f });
                 ecb.AddComponent(i, entity, new BulletDirectionComponent { _value = GetRandomDir(component._dir) });
@@ -51,10 +61,8 @@ public partial struct ShootTheBulletSystem : ISystem
             //}.Run();
             #endregion
 
-            // 弾生成データのリセット
+            // 弾生成フラグを折る
             component._active = false;
-            component._pos = float3.zero;
-            component._dir = float3.zero;
             SystemAPI.SetSingleton(component);
         }
     }

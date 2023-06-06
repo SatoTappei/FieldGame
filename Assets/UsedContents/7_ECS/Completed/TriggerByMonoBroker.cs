@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using BulletType = ShootData.BulletType;
 
 /// <summary>
 /// î≠éÀÇµÇΩíeÇÃèÓïÒÇÃç\ë¢ëÃ
@@ -7,12 +8,20 @@ using UnityEngine;
 /// </summary>
 public struct ShootData
 {
-    public ShootData(Vector3 pos, Vector3 dir)
+    public enum BulletType
     {
+        Player,
+        Enemy,
+    }
+
+    public ShootData(BulletType type, Vector3 pos, Vector3 dir)
+    {
+        Type = type;
         Pos = pos;
         Dir = dir;
     }
 
+    public BulletType Type { get; private set; }
     public Vector3 Pos { get; private set; }
     public Vector3 Dir { get; private set; }
 }
@@ -39,9 +48,9 @@ public class TriggerByMonoBroker : MonoBehaviour
         }
     }
 
-    public void AddShootData(Vector3 pos, Vector3 dir)
+    public void AddShootData(BulletType type, Vector3 pos, Vector3 dir)
     {
-        _queue.Enqueue(new ShootData(pos, dir));
+        _queue.Enqueue(new ShootData(type, pos, dir));
     }
 
     public bool TryGetShootData(out ShootData data)
