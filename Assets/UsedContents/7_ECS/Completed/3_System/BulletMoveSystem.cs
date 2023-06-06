@@ -47,7 +47,7 @@ public partial struct BulletMoveSystem : ISystem
     }
 
     /// <summary>
-    /// •À—ñ‚Å’e‚ÌˆÚ“®‚ğs‚¤Job
+    /// ’e‚ÌˆÚ“®‚ğs‚¤Job
     /// </summary>
     [BurstCompile]
     public partial struct BulletMoveJob : IJobEntity
@@ -56,11 +56,12 @@ public partial struct BulletMoveSystem : ISystem
         public float _deltaTime;
 
         [BurstCompile]
-        void Execute( BulletMoveAspect aspect, [EntityInQueryIndex] int sortKey)
+        void Execute(BulletMoveAspect aspect, [EntityInQueryIndex] int sortKey)
         {
             float3 dir = aspect._dir.ValueRO._value;
-            float speed = aspect._speed.ValueRO._value;
+            float speed = aspect._speed.ValueRW._value;
             aspect._transform.TranslateWorld(dir * speed * _deltaTime);
+            aspect._speed.ValueRW._value = speed * (1.0f - _deltaTime);
         }
     }
 }

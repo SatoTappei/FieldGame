@@ -76,3 +76,20 @@ using Unity.Transforms;
 //        //_ecb.SetComponent(newObject, LocalTransform.FromPosition(spawner.ValueRO.SpawnPosition));
 //    }
 //}
+
+//public void Fire()
+//    {
+//        if (World.DefaultGameObjectInjectionWorld == null ||
+//           World.DefaultGameObjectInjectionWorld.EntityManager == null)
+//        {
+//            Debug.LogError("Entity‚ÌDefault‚ÌWorld‚ªŒ©‚Â‚©‚ç‚È‚¢");
+//            return;
+//        }
+
+//        EntityManager manager = World.DefaultGameObjectInjectionWorld.EntityManager;
+//        Entity entity = manager.CreateEntity();
+
+//        manager.AddComponentData(entity, new LocalToWorldTransform { });
+//        manager.AddComponentData(entity, new BulletSpeedComponent { _value = 3.0f });
+//        manager.AddComponentData(entity, new BulletDirectionComponent { _value = new Vector3(0, 0, 1) });
+//    }

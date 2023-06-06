@@ -11,9 +11,20 @@ public struct BulletDirectionComponent : IComponentData
     public float3 _value;
 }
 
+public struct BulletAccelerationComponent : IComponentData
+{
+    // –¢Žg—p
+}
+
 public struct BulletHolderComponent : IComponentData
 {
     public Entity _prototype;
+}
+
+public struct RandomValueComponent : IComponentData
+{
+    public Random _value;
+    public uint _seed;
 }
 
 /// <summary>

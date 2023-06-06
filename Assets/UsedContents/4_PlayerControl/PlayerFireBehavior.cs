@@ -57,9 +57,7 @@ public class PlayerFireBehavior : IInputActionRegistrable, IDisposable
             GameManager.Instance.AudioModule.PlaySE(AudioType.SE_Fire);
             _fireParticle.Play();
 
-            // TODO:弾のコライダーを撃ちだす
-            // ECS側でエフェクトを合わせる必要がある
-            TriggerByMonoBroker.Instance.DebugAddShootData(_muzzle.position, _model.forward);
+            TriggerByMonoBroker.Instance.AddShootData(_muzzle.position, _model.forward);
 
             PlayerBullet bullet = _bulletPool.Rent();
             bullet.OnRent(_model, _muzzle.position);
