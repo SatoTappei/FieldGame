@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] PlayerFireBehavior _playerFireBehavior;
     [SerializeField] PlayerMoveBehavior _playerMoveBehavior;
+    [SerializeField] PlayerDefeatedBehavior _playerDefeatedBehavior;
     [SerializeField] CameraControlModule _cameraControlModule;
     [SerializeField] PlayerAnimModule _animModule;
     [SerializeField] PlayerLifePointModule _lifePointModule;
@@ -44,7 +45,12 @@ public class PlayerController : MonoBehaviour
 
         // ダメージを受けて体力が0になった際に死亡の演出を再生する
         _lifePointModule.CurrentLifePoint.Where(lifePoint => lifePoint == 0)
-            .Subscribe(_ => Debug.Log("死亡")).AddTo(gameObject);
+        .Subscribe(_ => 
+        {
+            // 体力を全回復して位置を初期位置に戻す
+            _playerDefeatedBehavior.Respawn(_transform);
+            _lifePointModule.Reset();
+        }).AddTo(gameObject);
 
         // 1フレーム毎の処理をしているのでオブジェクトを非表示にすれば正常に止まる
         this.UpdateAsObservable().Subscribe(_ => 

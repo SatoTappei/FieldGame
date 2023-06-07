@@ -34,5 +34,9 @@ public class PlayerLifePointModule
     /// <summary>
     /// リスポーンする際に体力をリセットする必要がある
     /// </summary>
-    void Reset() => _lifePoint.Value = _maxLifePoint;
+    public void Reset()
+    {
+        _lifePoint.Value = _maxLifePoint;
+        MessageBroker.Default.Publish(new PlayerLifePointData(0, _maxLifePoint));
+    }
 }
