@@ -15,10 +15,9 @@ public class PlayerFireBehavior : IInputActionRegistrable, IDisposable
     [Header("攻撃時に再生するParticle")]
     [SerializeField] ParticleSystem _fireParticle;
     [Header("プレイヤーの弾のプーリング")]
-    [SerializeField] PlayerBullet _playerBullet;
-    [SerializeField] Transform _pool;
+    [SerializeField] ActorBullet _bullet;
 
-    PlayerBulletPool _bulletPool;
+    ActorBulletPool _bulletPool;
 
     float _time;
     /// <summary>
@@ -34,7 +33,7 @@ public class PlayerFireBehavior : IInputActionRegistrable, IDisposable
 
     public void InitOnAwake()
     {
-        _bulletPool = new(_playerBullet, _pool);
+        _bulletPool = new(_bullet, "PlayerBulletPool");
     }
 
     /// <summary>
@@ -60,7 +59,7 @@ public class PlayerFireBehavior : IInputActionRegistrable, IDisposable
             TriggerByMonoBroker.Instance.AddShootData(ShootData.BulletType.Player, 
                 _muzzle.position, _model.forward);
 
-            PlayerBullet bullet = _bulletPool.Rent();
+            ActorBullet bullet = _bulletPool.Rent();
             bullet.OnRent(_model, _muzzle.position);
         }
     }

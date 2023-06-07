@@ -1,18 +1,20 @@
 using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
+using TargetTag = DamageData.TargetTag;
 
 /// <summary>
-/// PlayerBulletPoolにプーリングされているプレイヤーの弾のクラス
+/// ActorBulletPoolにプーリングされているキャラクターの弾のクラス
 /// 描画はECS側が行うのでコライダーのみでRendererが無い
 /// </summary>
-public class PlayerBullet : MonoBehaviour
+public class ActorBullet : MonoBehaviour
 {
     [SerializeField] float _lifeTime = 1.5f;
     [SerializeField] float _speed = 5.0f;
     [SerializeField] float _radius = 3.0f;
+    [SerializeField] TargetTag _targetTag;
 
-    PlayerBulletPool _bulletPool;
+    ActorBulletPool _bulletPool;
     Transform _transform;
     Vector3 _dir;
     float _timer;
@@ -21,7 +23,7 @@ public class PlayerBullet : MonoBehaviour
     {
         this.OnTriggerEnterAsObservable().Subscribe(_ =>
         {
-            MessageBroker.Default.Publish(new DamageData(transform.position, _radius, DamageData.TargetTag.Enemy));
+            MessageBroker.Default.Publish(new DamageData(transform.position, _radius, _targetTag));
         });
 
         _transform = transform;
@@ -42,12 +44,12 @@ public class PlayerBullet : MonoBehaviour
     }
 
     /// <summary>
-    /// PlayerBulletPoolで生成時に呼ばれる
+    /// ActorBulletPoolで生成時に呼ばれる
     /// </summary>
-    public void InitOnCreate(PlayerBulletPool pool) => _bulletPool = pool;
+    public void InitOnCreate(ActorBulletPool pool) => _bulletPool = pool;
 
     /// <summary>
-    /// プールから取り出した際に飛んでいく方向をプレイヤーの前方向に設定する
+    /// プールから取り出した際に飛んでいく方向をキャラクターの前方向に設定する
     /// </summary>
     public void OnRent(Transform model, Vector3 muzzlePos)
     {

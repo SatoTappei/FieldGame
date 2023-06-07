@@ -50,7 +50,7 @@ public struct InputTypeData
 /// ゲームスタートボタンを押した際に送信される
 /// インゲーム開始時をトリガーしたい場合はこのメッセージを受信する
 /// </summary>
-struct ToInGameTrigger
+public struct ToInGameTrigger
 {
 }
 

@@ -19,6 +19,8 @@ public class BehaviorTreeBlackBoard
     [SerializeField] Rigidbody _rigidbody;
     [Header("攻撃時に再生するParticle")]
     [SerializeField] ParticleSystem _fireParticle;
+    [Header("攻撃用の弾(コライダーのみ)")]
+    [SerializeField] ActorBullet _bullet;
     [Header("プレイヤーが属するレイヤー")]
     [SerializeField] LayerMask _playerLayer;
     [Header("プレイヤーを検知する範囲")]
@@ -40,6 +42,7 @@ public class BehaviorTreeBlackBoard
     public Transform Model => _model;
     public Rigidbody Rigidbody => _rigidbody;
     public ParticleSystem FireParticle => _fireParticle;
+    public ActorBullet Bullet => _bullet;
     public LayerMask PlayerLayer => _playerLayer;
     public float DetectRadius => _detectRadius;
     public float FireRadius => _fireRadius;

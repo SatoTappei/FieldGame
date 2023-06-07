@@ -1,16 +1,24 @@
-using UnityEngine;
+using UniRx;
+using UniRx.Triggers;
 
 /// <summary>
-/// 攻撃を行うアクションノード
+/// 弾を発射して攻撃を行うアクションノード
 /// </summary>
 public class FireAction : BehaviorTreeNode
 {
+    ActorBulletPool _bulletPool;
+
     public FireAction(string nodeName, BehaviorTreeBlackBoard blackBoard) 
-        : base(nodeName, blackBoard) { }
+        : base(nodeName, blackBoard)
+    {
+        // 敵の個体毎に弾を保持しておくためのプールを生成する
+        // プールはオブジェクトがDestroyされるタイミングで破棄される
+        _bulletPool = new(BlackBoard.Bullet, $"EnemyBulletPool{BlackBoard.Transform.GetInstanceID()}");
+        BlackBoard.Transform.OnDestroyAsObservable().Subscribe(_ => _bulletPool.Clear());
+    }
 
     protected override void OnEnter()
     {
-        //var v = GameObject.FindGameObjectWithTag()
     }
 
     protected override void OnExit()
@@ -22,15 +30,9 @@ public class FireAction : BehaviorTreeNode
         BlackBoard.FireParticle.Play();
         TriggerByMonoBroker.Instance.AddShootData(ShootData.BulletType.Enemy, 
             BlackBoard.Transform.position, BlackBoard.Model.forward);
-        
-        // コライダーを発射する処理が必要
-        // TransformとModelへの参照は黒板にある
-        // Poolから弾を取り出して発射したい
-        // Poolへの参照どうするか問題
-        // このノードは使いまわしたい、コールバックを渡して実行するようにすれば近接攻撃にも対応できる？
-        // 案1: このクラスにプールをstaticで持たせる
 
-        // ★優先:攻撃をどうするか？このゲームには遠距離攻撃しか無い事は確定している。近接攻撃は考慮しないで良し
+        ActorBullet bullet = _bulletPool.Rent();
+        bullet.OnRent(BlackBoard.Model, BlackBoard.Model.position + BlackBoard.Model.forward);
 
         return State.Success;
     }
