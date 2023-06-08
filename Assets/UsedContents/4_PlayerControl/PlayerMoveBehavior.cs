@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 [System.Serializable]
 public class PlayerMoveBehavior : IInputActionRegistrable
 {
+    [SerializeField] Rigidbody _rigidbody;
     [Header("移動速度")]
     [SerializeField] float _speed = 5.0f;
     [Header("走る際の移動速度の倍率")]
@@ -16,6 +17,7 @@ public class PlayerMoveBehavior : IInputActionRegistrable
     [Header("振り向き速度")]
     [SerializeField] float _rotSpeed = 20.0f;
 
+    Vector3 _velo;
     /// <summary>
     /// 入力を移動方向(正規化済み)に変換した値
     /// </summary>
@@ -33,19 +35,20 @@ public class PlayerMoveBehavior : IInputActionRegistrable
         register.OnRunCanceled += () => _isRunning = false;
     }
 
-    public void Update(Transform transform, CameraMode mode)
+    public void Update(CameraMode mode)
     {
         // Y軸を回転軸とした回転
         Quaternion cameraRot = Quaternion.AngleAxis(Camera.main.transform.eulerAngles.y, Vector3.up);
 
-        // 移動
-        Vector3 movement = cameraRot * _dir * Time.deltaTime * _speed * (_isRunning ? _runMag : 1);
-        transform.Translate(movement);
+        // 速度の更新
+        Vector3 velo = cameraRot * _dir * _speed * (_isRunning ? _runMag : 1);
+        velo.y = _rigidbody.velocity.y;
+        _velo = velo;
 
         // Freelook時には移動方向に向く
         if (mode == CameraMode.Freelook)
         {
-            if (movement == Vector3.zero) return;
+            if (velo.x == 0 && velo.z == 0) return;
 
             Quaternion rot = Quaternion.LookRotation(cameraRot * _dir, Vector3.up);
             _model.rotation = Quaternion.Lerp(_model.rotation, rot, Time.deltaTime * _rotSpeed);
@@ -62,6 +65,11 @@ public class PlayerMoveBehavior : IInputActionRegistrable
         }
     }
 
+    public void FixedUpdate()
+    {
+        _rigidbody.velocity = _velo;
+    }
+
     /// <summary>
     /// 移動方向の更新
     /// 一定間隔で入力を受け取るようInputSystemに登録される
@@ -70,5 +78,14 @@ public class PlayerMoveBehavior : IInputActionRegistrable
     {
         Vector2 value = context.ReadValue<Vector2>();
         _dir = new Vector3(value.x, 0, value.y).normalized;
+    }
+
+    /// <summary>
+    /// 移動速度を強制的に0にする事で、プレイヤーがリスポーンした際に滑っていくのを防ぐ
+    /// </summary>
+    public void ResetIdleVelocity()
+    {
+        _isRunning = false;
+        _dir = Vector3.zero;
     }
 }

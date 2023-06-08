@@ -121,3 +121,4 @@ MonoBehaviour:
   _lifeTime: 1.5
   _speed: 30
   _radius: 3
+  _targetTag: 1

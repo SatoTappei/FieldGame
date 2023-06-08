@@ -32,7 +32,7 @@ public class PlayerAnimModule : IInputActionRegistrable
 
     void SetAnimParam(InputAction.CallbackContext context)
     {
-        _moveAnimSpeedParam = context.ReadValue<Vector2>().sqrMagnitude;
+        _moveAnimSpeedParam = context.ReadValue<Vector2>().sqrMagnitude > 0 ? 1 : 0;
     }
 
     /// <summary>

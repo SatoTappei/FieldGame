@@ -1,4 +1,3 @@
-using System.Buffers;
 using UnityEngine;
 
 /// <summary>
@@ -20,12 +19,21 @@ public class DetectPlayerAction : BehaviorTreeNode
 
     protected override State OnStay()
     {
-        // 長さ1以上の配列を借りてきてプレイヤーを検知する
-        Collider[] hits = ArrayPool<Collider>.Shared.Rent(1);
-        int count = Physics.OverlapSphereNonAlloc(BlackBoard.Transform.position,
-            BlackBoard.DetectRadius, hits, BlackBoard.PlayerLayer);
-        ArrayPool<Collider>.Shared.Return(hits, true);
+        // プレイヤーの後ろに障害物がある場合、RaycastHitに入ってくるのは手前にあるPlayerのみ
+        // 障害物の後ろにプレイヤーがいる場合はRaycastHitに障害物が入るので視界に映らない
+        Vector3 rayOrigin = BlackBoard.Transform.position;
+        rayOrigin.y += BlackBoard.PlayerVisibleRayOffset;
+        Vector3 dir = (BlackBoard.Player.position - BlackBoard.Transform.position).normalized;
+        bool rayHit = Physics.Raycast(rayOrigin, dir, out RaycastHit hit, 
+            BlackBoard.DetectRadius, BlackBoard.PlayerDetectLayer);
 
-        return count > 0 ? State.Success : State.Failure;
+        if (rayHit)
+        {
+            return hit.collider.CompareTag("Player") ? State.Success : State.Failure;
+        }
+        else
+        {
+            return State.Failure;
+        }
     }
 }

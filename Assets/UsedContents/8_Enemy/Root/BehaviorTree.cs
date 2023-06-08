@@ -60,7 +60,7 @@ public class BehaviorTree : MonoBehaviour
 
         LoopDecorator loopDecorator = new("子を繰り返す");
         TimerDecorator detectPlayerTimer = new(waitingState: State.Failure,
-            BehaviorTreeBlackBoard.DetectInterval, "一定間隔でプレイヤーを検知Decorator");
+            _blackBoard.PlayerDetectInterval, "一定間隔でプレイヤーを検知Decorator");
         TimerDecorator fireTimer = new(waitingState: State.Success,
             _blackBoard.FireRate, "一定間隔で検知->発射をするDecorator");
 
@@ -111,8 +111,9 @@ public class BehaviorTree : MonoBehaviour
         if (_blackBoard.Transform != null && _blackBoard.Player != null)
         {
             DrawPlayerDetectRange();
+            DrawPlayerDetectRay();
             DrawOpenFireRange();
-            DrawPlayerVisibleRay();
+            DrawPlayerVisibleInFireRangeRay();
         }
     }
 
@@ -122,19 +123,28 @@ public class BehaviorTree : MonoBehaviour
         Gizmos.DrawWireSphere(_blackBoard.Transform.position, _blackBoard.DetectRadius);
     }
 
+    void DrawPlayerDetectRay()
+    {
+        Gizmos.color = Color.yellow;
+        Vector3 rayOrigin = _blackBoard.Transform.position;
+        rayOrigin.y += _blackBoard.PlayerVisibleRayOffset;
+        Vector3 dir = (_blackBoard.Player.position - _blackBoard.Transform.position).normalized;
+        Gizmos.DrawRay(rayOrigin, dir * _blackBoard.DetectRadius);
+    }
+
     void DrawOpenFireRange()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(_blackBoard.Transform.position, _blackBoard.FireRadius);
     }
 
-    void DrawPlayerVisibleRay()
+    void DrawPlayerVisibleInFireRangeRay()
     {
         Vector3 rayOrigin = _blackBoard.Transform.position;
-        rayOrigin.y += MoveByPathfindingAction.PlayerVisibleRayOffset;
+        rayOrigin.y += _blackBoard.PlayerVisibleRayOffset;
         Vector3 rayDir = (_blackBoard.Player.position - _blackBoard.Transform.position).normalized;
         rayDir.y = 0;
-        Gizmos.color = Color.yellow;
+        Gizmos.color = Color.blue;
         Gizmos.DrawRay(rayOrigin, rayDir * _blackBoard.FireRadius);
     }
 }

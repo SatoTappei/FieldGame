@@ -8,10 +8,16 @@ using UnityEngine;
 public class BehaviorTreeBlackBoard
 {
     /// <summary>
+    /// 移動中にプレイヤーを視認するためのRayを撃つ高さ
+    /// Modelの高さを1として値を設定する
+    /// </summary>
+    static readonly float VisibleRayOffset = 0.5f;
+
+    /// <summary>
     /// RayCast系を用いてプレイヤーを検知する間隔
     /// タイマーデコレータと各種ノードの、一定間隔でRayCastする処理に使用される
     /// </summary>
-    public static readonly float DetectInterval = 0.1f;
+    static readonly float DetectInterval = 0.1f;
 
     [SerializeField] Transform _player;
     [SerializeField] Transform _transform;
@@ -21,8 +27,8 @@ public class BehaviorTreeBlackBoard
     [SerializeField] ParticleSystem _fireParticle;
     [Header("攻撃用の弾(コライダーのみ)")]
     [SerializeField] ActorBullet _bullet;
-    [Header("プレイヤーが属するレイヤー")]
-    [SerializeField] LayerMask _playerLayer;
+    [Header("プレイヤーと障害物のレイヤーを指定する")]
+    [SerializeField] LayerMask _playerDetectLayer;
     [Header("プレイヤーを検知する範囲")]
     [SerializeField] float _detectRadius = 5.0f;
     [Header("攻撃開始範囲")]
@@ -43,12 +49,14 @@ public class BehaviorTreeBlackBoard
     public Rigidbody Rigidbody => _rigidbody;
     public ParticleSystem FireParticle => _fireParticle;
     public ActorBullet Bullet => _bullet;
-    public LayerMask PlayerLayer => _playerLayer;
+    public LayerMask PlayerDetectLayer => _playerDetectLayer;
     public float DetectRadius => _detectRadius;
     public float FireRadius => _fireRadius;
     public float FireRate => _fireRate;
     public float MoveSpeed => _moveSpeed;
     public float RotSpeed => _rotSpeed;
+    public float PlayerVisibleRayOffset => VisibleRayOffset;
+    public float PlayerDetectInterval => DetectInterval;
 
     Stack<Vector3> _path;
 

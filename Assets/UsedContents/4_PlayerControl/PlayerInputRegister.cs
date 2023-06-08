@@ -44,9 +44,14 @@ public class PlayerInputRegister
                 _inputActions.Player.Enable();
                 _inputActions.UI.Disable();
             }
-            else
+            else if(data.Type == InputTypeData.InputType.UI)
             {
                 _inputActions.UI.Enable();
+                _inputActions.Player.Disable();
+            }
+            else
+            {
+                _inputActions.UI.Disable();
                 _inputActions.Player.Disable();
             }
         }).AddTo(gameObject);

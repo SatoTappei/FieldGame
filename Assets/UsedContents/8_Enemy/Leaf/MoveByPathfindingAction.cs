@@ -7,11 +7,6 @@ using System.Buffers;
 public class MoveByPathfindingAction : BehaviorTreeNode
 {
     /// <summary>
-    /// 移動中にプレイヤーを視認するためのRayを撃つ高さ
-    /// Modelの高さを1として値を設定する
-    /// </summary>
-    public static readonly float PlayerVisibleRayOffset = 0.5f;
-    /// <summary>
     /// 目的地に到着したとみなす距離
     /// この値は移動速度を速くした場合、調整しないといけない
     /// </summary>
@@ -46,7 +41,7 @@ public class MoveByPathfindingAction : BehaviorTreeNode
     {
         // 一定間隔で攻撃開始範囲にプレイヤーがいるか検知
         _playerDetectTimer += Time.deltaTime;
-        if (_playerDetectTimer > BehaviorTreeBlackBoard.DetectInterval)
+        if (_playerDetectTimer > BlackBoard.PlayerDetectInterval)
         {
             _playerDetectTimer = 0;
             if (IsPlayerWithInFireRadius()) return State.Success;
@@ -60,7 +55,7 @@ public class MoveByPathfindingAction : BehaviorTreeNode
         }
 
         // 移動
-        if ((_targetPos - BlackBoard.Transform.position).sqrMagnitude <= Approximately)
+        if (IsArrivalNodePos())
         {
             // 黒板が保持している経路から次の地点を取得出来なかった場合は移動完了なので成功を返す
             if (!BlackBoard.Path.TryPop(out _targetPos)) return State.Success;
@@ -74,20 +69,37 @@ public class MoveByPathfindingAction : BehaviorTreeNode
     }
 
     /// <summary>
-    /// 攻撃開始範囲と同じ長さかつ、障害物を無視してプレイヤーにしかヒットしないRayを撃つ
+    /// 攻撃開始範囲と同じ長さかつ、障害物とプレイヤーにしかヒットしないRayを飛ばす
     /// このRayがヒットした場合はプレイヤーを視認している
     /// </summary>
     bool IsPlayerWithInFireRadius()
     {
-        RaycastHit[] hits = ArrayPool<RaycastHit>.Shared.Rent(1);
         Vector3 rayOrigin = BlackBoard.Transform.position;
-        rayOrigin.y += PlayerVisibleRayOffset;
+        rayOrigin.y += BlackBoard.PlayerVisibleRayOffset;
         Vector3 rayDir = (BlackBoard.Player.position - BlackBoard.Transform.position).normalized;
         rayDir.y = 0;
-        int count = Physics.RaycastNonAlloc(rayOrigin, rayDir, hits, BlackBoard.FireRadius, BlackBoard.PlayerLayer);
-        ArrayPool<RaycastHit>.Shared.Return(hits, true);
+        bool rayHit = Physics.Raycast(rayOrigin, rayDir, out RaycastHit hit, 
+            BlackBoard.FireRadius, BlackBoard.PlayerDetectLayer);
 
-        return count > 0;
+        if (rayHit)
+        {
+            return hit.collider.CompareTag("Player");
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// グリッドがプレイヤーの高さを基準に敷かれるので、Y座標を0にして比較することで
+    /// 高低差がある場合でも距離の比較が出来る
+    /// </summary>
+    bool IsArrivalNodePos()
+    {
+        Vector3 tp = new Vector3(_targetPos.x, 0, _targetPos.z);
+        Vector3 btp = new Vector3(BlackBoard.Transform.position.x, 0, BlackBoard.Transform.position.z);
+        return (tp - btp).sqrMagnitude <= Approximately;
     }
 
     void MoveAndRotate()
@@ -98,6 +110,7 @@ public class MoveByPathfindingAction : BehaviorTreeNode
         Vector3 velo = dir * BlackBoard.MoveSpeed;
         velo.y = BlackBoard.Rigidbody.velocity.y;
         BlackBoard.Rigidbody.velocity = velo;
+
         // 回転
         Quaternion playerRot = Quaternion.AngleAxis(BlackBoard.Player.position.y, Vector3.up);
         Quaternion rot = Quaternion.LookRotation(playerRot * dir, Vector3.up);

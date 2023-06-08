@@ -1,6 +1,8 @@
 using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 
 /// <summary>
 /// 各振る舞いのクラスを用いてプレイヤーを制御するクラス
@@ -50,17 +52,29 @@ public class PlayerController : MonoBehaviour
             // 体力を全回復して位置を初期位置に戻す
             _playerDefeatedBehavior.Respawn(_transform);
             _lifePointModule.Reset();
+            
+            // 速度を0にリセットして一定時間入力を受け付けない
+            // この処理が呼ばれてもUpdate()で更新されているメソッドは影響を受けないが
+            // 入力を受け付けない間もUpdate()の処理が呼ばれているので注意
+            CancellationToken token = this.GetCancellationTokenOnDestroy();
+            _playerDefeatedBehavior.PlayerInputDisableDelayedEnableAsync(token).Forget();
+            _playerMoveBehavior.ResetIdleVelocity();
+
         }).AddTo(gameObject);
 
         // 1フレーム毎の処理をしているのでオブジェクトを非表示にすれば正常に止まる
         this.UpdateAsObservable().Subscribe(_ => 
         {
             CameraMode mode = _cameraControlModule.CurrentCameraMode;
-            _playerMoveBehavior.Update(_transform, mode);
+            _playerMoveBehavior.Update(mode);
             _playerFireBehavior.Update();
             _cameraControlModule.Update();
             _animModule.Update();
             _aimRaycastModule.Update(mode);
+        });
+        this.FixedUpdateAsObservable().Subscribe(_ =>
+        {
+            _playerMoveBehavior.FixedUpdate();
         });
 
         // ゲーム終了時にオブジェクトが破棄されるタイミングで後処理

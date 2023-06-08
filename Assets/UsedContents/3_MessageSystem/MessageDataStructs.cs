@@ -35,6 +35,7 @@ public struct InputTypeData
     {
         Player,
         UI,
+        Disable
     }
 
     public InputTypeData(InputType type)
