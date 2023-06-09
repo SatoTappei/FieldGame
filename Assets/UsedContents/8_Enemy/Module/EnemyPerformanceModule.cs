@@ -1,7 +1,5 @@
 using UnityEngine;
 
-// TODO:演出はECSが絡むのでこのクラスは大幅に変更するかもしれない
-
 /// <summary>
 /// 演出用のParticleの再生を行うクラス
 /// </summary>

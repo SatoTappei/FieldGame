@@ -7,18 +7,31 @@ using UnityEngine;
 [System.Serializable]
 public class EnemyLineModule
 {
-    static string[] _lines =
+    static string[] _defeatedLines =
     {
-        "も、もうだめだ…",
+        "あ、兄貴ぃ…もうだめだ…",
         "あぼーん",
         "ちょっと待ってあのね",
-        "ﾔﾗﾚﾁｬｯﾀ",
+        "おびただしい りゅうけつ ！",
         "ｱﾂｲｾﾞ ｱﾂｲｾﾞｪｰ ｱﾂｸﾃ ｼﾇｾﾞｪ-ｯ!"
     };
 
+    static string[] _detectLines =
+    {
+        "エモノがいたぜ！",
+        "ターゲット発見伝！",
+        "突撃ーっ！"
+    };
+
+    public void SendDetectLineMessage()
+    {
+        string line = _detectLines[Random.Range(0, _detectLines.Length)];
+        MessageBroker.Default.Publish(new LineData("敵", line));
+    }
+
     public void SendDefeatedLineMessage()
     {
-        string line = _lines[Random.Range(0, _lines.Length)];
+        string line = _defeatedLines[Random.Range(0, _defeatedLines.Length)];
         MessageBroker.Default.Publish(new LineData("敵", line));
     }
 }

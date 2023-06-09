@@ -15,6 +15,7 @@ public class BehaviorTree : MonoBehaviour
     [SerializeField] EnemyLifePointModule _lifePointModule;
     [SerializeField] EnemyPerformanceModule _performanceModule;
     [SerializeField] EnemyLineModule _lineModule;
+    [SerializeField] EnemyActiveControlModule _activeControlModule;
 
     void Awake()
     {
@@ -22,8 +23,10 @@ public class BehaviorTree : MonoBehaviour
         RootNode rootNode = new();
         rootNode.AddChild(CreateTree());
 
-        // FixedUpdate()のタイミングでノードを更新する
+        // カメラに映っていた場合、FixedUpdate()のタイミングでノードを更新する
+        _activeControlModule.InitOnAwake(transform, _blackBoard.Player);
         this.FixedUpdateAsObservable()
+            .Where(_ => _activeControlModule.IsActive)
             .TakeWhile(_ => _blackBoard.LifePoint > 0)
             .DoOnCompleted(() => 
             {
@@ -96,10 +99,13 @@ public class BehaviorTree : MonoBehaviour
         // 移動する際にアニメーションするようコールバックへ登録
         moveByPathfindingAction.OnNodeEnter += () => _animationModule.Play(AnimType.Move);
         moveByPathfindingAction.OnNodeExit += () => _animationModule.Play(AnimType.Idle);
+        // 移動する際に台詞を表示するようコールバックへ登録
+        moveByPathfindingAction.OnNodeEnter += _lineModule.SendDetectLineMessage;
         this.OnDisableAsObservable().Subscribe(_ =>
         {
             moveByPathfindingAction.OnNodeEnter -= () => _animationModule.Play(AnimType.Move);
             moveByPathfindingAction.OnNodeExit -= () => _animationModule.Play(AnimType.Idle);
+            moveByPathfindingAction.OnNodeEnter -= _lineModule.SendDetectLineMessage;
         });
 
         // ルートノードの子として登録するノードを返す
@@ -114,6 +120,7 @@ public class BehaviorTree : MonoBehaviour
             DrawPlayerDetectRay();
             DrawOpenFireRange();
             DrawPlayerVisibleInFireRangeRay();
+            _activeControlModule.DrawActiveRange(transform);
         }
     }
 

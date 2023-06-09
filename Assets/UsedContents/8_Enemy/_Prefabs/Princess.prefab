@@ -1379,7 +1379,7 @@ GameObject:
   - component: {fileID: 91192561032855426}
   - component: {fileID: 91192561032855429}
   - component: {fileID: 91192561032855428}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Princess
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -1490,12 +1490,13 @@ MonoBehaviour:
     _model: {fileID: 8114548726224106882}
     _rigidbody: {fileID: 91192561032855429}
     _fireParticle: {fileID: 8874873220222286432}
-    _playerLayer:
+    _bullet: {fileID: -63864057277648167, guid: 914972cee7a643b44b0dc30e1b556c46, type: 3}
+    _playerDetectLayer:
       serializedVersion: 2
-      m_Bits: 128
+      m_Bits: 192
     _detectRadius: 11.78
-    _fireRadius: 6.38
-    _fireRate: 0.13
+    _fireRadius: 9.96
+    _fireRate: 0.2
     _moveSpeed: 9
     _rotSpeed: 10
     _lifePoint: 3
@@ -1503,6 +1504,8 @@ MonoBehaviour:
     _animator: {fileID: 91192561032855431}
   _performanceModule:
     _defeatedParticle: {fileID: 8405853138380592667, guid: 04610925de33551468112cefd8d1a41b, type: 3}
+  _activeControlModule:
+    _renderer: {fileID: 1673110010299888844}
 --- !u!1 &6611570574855020724
 GameObject:
   m_ObjectHideFlags: 0

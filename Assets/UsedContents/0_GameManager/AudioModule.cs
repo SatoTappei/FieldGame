@@ -49,9 +49,13 @@ public class AudioModule
     {
         _audioSources = new AudioSource[_playAtSame];
 
+        //AudioSource originAS = go.GetComponent<AudioSource>();
         for (int i = 0; i < _audioSources.Length; i++)
         {
             _audioSources[i] = go.AddComponent<AudioSource>();
+            //_audioSources[i].spatialBlend = originAS.spatialBlend;
+            //_audioSources[i].SetCustomCurve(AudioSourceCurveType.CustomRolloff, 
+            //    originAS.GetCustomCurve(AudioSourceCurveType.CustomRolloff));
         }
 
         foreach (AudioData data in _audioDatas)
