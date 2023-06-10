@@ -91,20 +91,11 @@ public class MoveByPathfindingAction : BehaviorTreeNode
         }
     }
 
-    /// <summary>
-    /// グリッドがプレイヤーの高さを基準に敷かれるので、Y座標を0にして比較することで
-    /// 高低差がある場合でも距離の比較が出来る
-    /// </summary>
-    bool IsArrivalNodePos()
-    {
-        Vector3 tp = new Vector3(_targetPos.x, 0, _targetPos.z);
-        Vector3 btp = new Vector3(BlackBoard.Transform.position.x, 0, BlackBoard.Transform.position.z);
-        return (tp - btp).sqrMagnitude <= Approximately;
-    }
+    bool IsArrivalNodePos() => GetToTargetDistance().sqrMagnitude <= Approximately;
 
     void MoveAndRotate()
     {
-        Vector3 dir = (_targetPos - BlackBoard.Transform.position).normalized;
+        Vector3 dir = GetToTargetDistance().normalized;
         
         // 移動
         Vector3 velo = dir * BlackBoard.MoveSpeed;
@@ -118,5 +109,16 @@ public class MoveByPathfindingAction : BehaviorTreeNode
         rot.z = 0;
         BlackBoard.Model.rotation = Quaternion.Lerp(BlackBoard.Model.rotation, rot, 
             Time.deltaTime * BlackBoard.RotSpeed);
+    }
+
+    /// <summary>
+    /// グリッドがプレイヤーの高さを基準に敷かれるので、Y座標を0にして比較することで
+    /// 高低差がある場合でも距離の比較が出来る
+    /// </summary>
+    Vector3 GetToTargetDistance()
+    {
+        Vector3 tp = new Vector3(_targetPos.x, 0, _targetPos.z);
+        Vector3 btp = new Vector3(BlackBoard.Transform.position.x, 0, BlackBoard.Transform.position.z);
+        return tp - btp;
     }
 }

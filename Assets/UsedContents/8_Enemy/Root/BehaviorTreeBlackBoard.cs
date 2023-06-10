@@ -27,7 +27,7 @@ public class BehaviorTreeBlackBoard
     [SerializeField] ParticleSystem _fireParticle;
     [Header("攻撃用の弾(コライダーのみ)")]
     [SerializeField] ActorBullet _bullet;
-    [Header("プレイヤーと障害物のレイヤーを指定する")]
+    [Header("プレイヤー＆壁などの障害物のレイヤー")]
     [SerializeField] LayerMask _playerDetectLayer;
     [Header("プレイヤーを検知する範囲")]
     [SerializeField] float _detectRadius = 5.0f;
@@ -71,9 +71,9 @@ public class BehaviorTreeBlackBoard
             if (_path == null)
             {
                 Debug.LogWarning("Pathがnullなので現在地の座標に移動するPathを作成して返した");
-                Stack<Vector3> path = new();
-                path.Push(Transform.position);
-                return path;
+                _path = new();
+                _path.Push(Transform.position);
+                return _path;
             }
             else
             {
