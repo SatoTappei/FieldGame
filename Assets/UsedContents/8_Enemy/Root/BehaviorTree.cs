@@ -96,10 +96,12 @@ public class BehaviorTree : MonoBehaviour
         attackSequence.AddChild(detectPlayer);
         attackSequence.AddChild(fireAction);
 
-        // 移動する際にアニメーションするようコールバックへ登録
         moveByPathfindingAction.OnNodeEnter += () => _animationModule.Play(AnimType.Move);
         moveByPathfindingAction.OnNodeExit += () => _animationModule.Play(AnimType.Idle);
-        // 移動する際に台詞を表示するようコールバックへ登録
+        // TODO:移動終了後にIdleのアニメーションを再生するだけだと、経路が無くてその場に移動する
+        //      場合に攻撃時にMoveのアニメーションが再生された状態になってしまう
+        fireAction.OnNodeEnter += () => _animationModule.Play(AnimType.Idle);
+        // 移動する際に台詞を表示する
         moveByPathfindingAction.OnNodeEnter += _lineModule.SendDetectLineMessage;
         this.OnDisableAsObservable().Subscribe(_ =>
         {

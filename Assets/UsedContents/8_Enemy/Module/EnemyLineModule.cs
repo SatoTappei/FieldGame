@@ -7,7 +7,7 @@ using UnityEngine;
 [System.Serializable]
 public class EnemyLineModule
 {
-    static string[] _defeatedLines =
+    static readonly string[] DefeatedLines =
     {
         "「あ、兄貴ぃ…もうだめだ…」",
         "「あぼーん」",
@@ -16,7 +16,7 @@ public class EnemyLineModule
         "「ｱﾂｲｾﾞ ｱﾂｲｾﾞｪｰ ｱﾂｸﾃ ｼﾇｾﾞｪ-ｯ!」"
     };
 
-    static string[] _detectLines =
+    static readonly string[] DetectLines =
     {
         "「エモノがいたぜ！」",
         "「ターゲット発見伝！」",
@@ -25,13 +25,13 @@ public class EnemyLineModule
 
     public void SendDetectLineMessage()
     {
-        string line = _detectLines[Random.Range(0, _detectLines.Length)];
+        string line = DetectLines[Random.Range(0, DetectLines.Length)];
         MessageBroker.Default.Publish(new LineData("敵", line));
     }
 
     public void SendDefeatedLineMessage()
     {
-        string line = _defeatedLines[Random.Range(0, _defeatedLines.Length)];
+        string line = DefeatedLines[Random.Range(0, DefeatedLines.Length)];
         MessageBroker.Default.Publish(new LineData("敵", line));
     }
 }
