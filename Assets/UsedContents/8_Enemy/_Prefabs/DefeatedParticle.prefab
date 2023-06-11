@@ -34097,7 +34097,6 @@ GameObject:
   - component: {fileID: 8407089012744654743}
   - component: {fileID: 8531749163274398057}
   - component: {fileID: 8530194063076472315}
-  - component: {fileID: 8530194063076472316}
   m_Layer: 0
   m_Name: DefeatedParticle
   m_TagString: Untagged
@@ -34123,7 +34122,7 @@ Transform:
   - {fileID: 8409386005636160943}
   - {fileID: 8409763926655280341}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &8531749163274398057
 ParticleSystem:
@@ -39026,16 +39025,3 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &8530194063076472316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8405853138380592667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07dca2b096a0a5a43a25d5fce171f5e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _memo: "ECS\u304C\u51FA\u6765\u308B\u307E\u3067\u306E\u4EEE\u306E\u6F14\u51FA\n"

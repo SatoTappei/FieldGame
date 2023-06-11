@@ -51,9 +51,14 @@ public struct InputTypeData
 /// ゲームスタートボタンを押した際に送信される
 /// インゲーム開始時をトリガーしたい場合はこのメッセージを受信する
 /// </summary>
-public struct ToInGameTrigger
-{
-}
+public struct ToInGameTrigger { }
+
+/// <summary>
+/// ヘリコプターが来るまでのタイマーが0になった時に送信される
+/// InGameStreamクラスが送信する
+/// タイマーが0になったタイミングをトリガーしたい場合はこのメッセージを受信する
+/// </summary>
+public struct InGameTimeOverTrigger { }
 
 /// <summary>
 /// プレイヤーのダメージを受ける前と後の体力の構造体
