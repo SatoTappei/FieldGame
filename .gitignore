@@ -64,3 +64,4 @@ Assets/_Local/
 Assets/Plugins/UniRx/
 _Build/
 Assets/InGame/OcclusionCullingData.asset
+Assets/Scripts/ZString/
