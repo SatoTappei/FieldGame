@@ -33,6 +33,8 @@ public class TitleController : MonoBehaviour
         {
             MessageBroker.Default.Publish(new ToInGameTrigger());
             MessageBroker.Default.Publish(new InputTypeData(InputTypeData.InputType.Player));
+
+            _titleUIRoot.gameObject.SetActive(false);
         });
     }
 

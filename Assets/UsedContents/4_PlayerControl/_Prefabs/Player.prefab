@@ -1138,7 +1138,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 141318804520445492}
-  - component: {fileID: 141318804520445493}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -1163,19 +1162,6 @@ Transform:
   m_Father: {fileID: 9061222306022931959}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &141318804520445493
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 141318804520445495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07dca2b096a0a5a43a25d5fce171f5e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _memo: "MoveBehavior\u3068CameraControlBehavior\u304C\u53C2\u7167\u3057\u3066\u3044\u308B\nMoveBehavior\u5074\u3067\u30D7\u30EC\u30A4\u30E4\u30FC\u306E\u79FB\u52D5\u306B\u3088\u3063\u3066\u56DE\u8EE2\u3059\u308B\nCameraControlBehavior\u306F\u56DE\u8EE2\u3092\u8AAD\u307F\u53D6\u308B\u3060\u3051"
 --- !u!1 &141318804568244959
 GameObject:
   m_ObjectHideFlags: 0
@@ -3567,7 +3553,7 @@ Transform:
   - {fileID: 141318804520445492}
   - {fileID: 141318804251495235}
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1384274609775513741
 Animator:
@@ -3656,13 +3642,18 @@ MonoBehaviour:
     _muzzle: {fileID: 7910341299451028192}
     _attackRate: 0.16
     _fireParticle: {fileID: 8000697347474314158}
-    _playerBullet: {fileID: -63864057277648167, guid: c8895c2d201cc5d4a86df03ca471ce1d, type: 3}
-    _pool: {fileID: 0}
+    _bullet: {fileID: 0}
   _playerMoveBehavior:
+    _rigidbody: {fileID: 0}
     _speed: 5
     _runMag: 1.5
     _model: {fileID: 141318804520445492}
     _rotSpeed: 20
+  _playerDefeatedBehavior:
+    _respawnPoint: {fileID: 0}
+    _inputDisableTime: 1.5
+  _invisibleBehavior:
+    _invisibleLayerName: Invisible
   _cameraControlModule:
     _cameras:
     - {fileID: 0}
@@ -3678,6 +3669,16 @@ MonoBehaviour:
     _runSpeedParamMag: 2
   _lifePointModule:
     _maxLifePoint: 4
+  _aimRaycastModule:
+    _muzzle: {fileID: 0}
+    _model: {fileID: 0}
+    _aimSight: {fileID: 0}
+    _layerMask:
+      serializedVersion: 2
+      m_Bits: 0
+    _distance: 50
+    _radius: 3
+    _drawGizmos: 1
 --- !u!1 &5693268477884904073
 GameObject:
   m_ObjectHideFlags: 0

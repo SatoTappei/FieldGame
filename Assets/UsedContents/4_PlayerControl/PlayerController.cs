@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] PlayerFireBehavior _playerFireBehavior;
     [SerializeField] PlayerMoveBehavior _playerMoveBehavior;
     [SerializeField] PlayerDefeatedBehavior _playerDefeatedBehavior;
+    [SerializeField] InvisibleBehavior _invisibleBehavior;
     [SerializeField] CameraControlModule _cameraControlModule;
     [SerializeField] PlayerAnimModule _animModule;
     [SerializeField] PlayerLifePointModule _lifePointModule;
@@ -27,6 +28,12 @@ public class PlayerController : MonoBehaviour
 
     void InitOnAwake()
     {
+        // 脱出してゲームクリアしたタイミングで無敵状態になる
+        MessageBroker.Default.Receive<InGameClearTrigger>().Subscribe(_ => 
+        {
+            _invisibleBehavior.Active(gameObject);
+        }).AddTo(gameObject);
+
         // InputSystemへの操作の登録
         _inputActionRegister = new PlayerInputRegister(gameObject);
         _playerMoveBehavior.RegisterInputAction(_inputActionRegister);

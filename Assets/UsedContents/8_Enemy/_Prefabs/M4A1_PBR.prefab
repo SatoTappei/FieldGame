@@ -1314,7 +1314,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3002648561850828594}
-  - component: {fileID: -8755474960456038421}
   m_Layer: 0
   m_Name: M4A1_PBR
   m_TagString: Untagged
@@ -1353,19 +1352,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-8755474960456038421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3002648561850735442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07dca2b096a0a5a43a25d5fce171f5e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _memo: "\u6575\u30AD\u30E3\u30E9\u30AF\u30BF\u30FC\u7528\u306E\u6B66\u5668\n\u30DE\u30BA\u30EB\u30D5\u30E9\u30C3\u30B7\u30E5\u306EParticle\u304C\u5B50\u306B\u306A\u3063\u3066\u3044\u308B\n\u6575\u30AD\u30E3\u30E9\u30AF\u30BF\u30FC\u306E\u624B\u306E\u5B50\u3068\u3057\u3066\u6301\u305F\u305B\u308B\u3060\u3051\u3067\u4F7F\u7528\u53EF\u80FD\nPlayer\u3068\u540C\u3058\u4ED5\u69D8\u306B\u306A\u3063\u3066\u3044\u308B\nPlay()\u3092\u547C\u3093\u3067Particle\u3092\u518D\u751F\u3059\u308B\u3053\u3068"
 --- !u!1 &3002648561850735444
 GameObject:
   m_ObjectHideFlags: 0

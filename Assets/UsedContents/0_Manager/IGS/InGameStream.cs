@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System.Threading;
 using UniRx;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// インゲームの流れを制御するクラス
@@ -12,10 +13,12 @@ public class InGameStream : MonoBehaviour
     [SerializeField] InGameTimerModule _timerModule;
     [SerializeField] InGameHelicopterMoveModule _heliMoveModule;
     [SerializeField] InGameEscapeAreaModule _escapeAreaModule;
+    [SerializeField] InGameResultModule _resultModule;
 
     void Awake()
     {
         _escapeAreaModule.Inactive();
+        _resultModule.Inactive();
 
         // タイトル画面からインゲームに遷移したことをトリガーする
         MessageBroker.Default.Receive<ToInGameTrigger>().Subscribe(_ => 
@@ -33,6 +36,15 @@ public class InGameStream : MonoBehaviour
         await _heliMoveModule.Execute(token);
         _escapeAreaModule.Active();
         await _escapeAreaModule.Execute(token, gameObject);
-        Debug.Log("脱出");
+
+        // 脱出してゲーム終了を送信する＆UI操作に切り替える
+        MessageBroker.Default.Publish(new InGameClearTrigger());
+        MessageBroker.Default.Publish(new InputTypeData(InputTypeData.InputType.UI));
+
+        // リザルト画面でボタンがクリックされるのを待って再読み込み
+        _resultModule.ActiveAndSelectResultButton();
+        await _resultModule.Execute(token);
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

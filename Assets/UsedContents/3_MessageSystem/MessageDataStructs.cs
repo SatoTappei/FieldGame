@@ -61,6 +61,13 @@ public struct ToInGameTrigger { }
 public struct InGameTimeOverTrigger { }
 
 /// <summary>
+/// 脱出地点にプレイヤーが触れた時点で送信される
+/// InGameStreamクラスが送信する
+/// ゲーム終了のタイミングをトリガーしたい場合はこのメッセージを受信する
+/// </summary>
+public struct InGameClearTrigger { }
+
+/// <summary>
 /// プレイヤーのダメージを受ける前と後の体力の構造体
 /// プレイヤーがダメージを受けた場合にメッセージングされる
 /// </summary>
