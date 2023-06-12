@@ -14,7 +14,7 @@ public class PlayerAimRaycastModule
     [SerializeField] Transform _muzzle;
     [SerializeField] Transform _model;
     [Header("AimSightCanvas‚Ìq‚É‚È‚Á‚Ä‚¢‚éAim")]
-    [SerializeField] PlayerAimSight _aimSight;
+    [SerializeField] PlayerAimsight _aimSight;
     [Header("“G‚ÆáŠQ•¨‚ÌƒŒƒCƒ„[")]
     [SerializeField] LayerMask _layerMask;
     [Header("”ò‚Î‚·SphereCast‚Ìİ’è")]

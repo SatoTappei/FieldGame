@@ -2,10 +2,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// プレイヤーの照準を制御するクラス
-/// PlayerAimRaycastModuleクラスから操作される
+/// 画面中央に表示される照準のクラス
+/// UI本体にアタッチされ、PlayerAimRaycastModuleから操作される
 /// </summary>
-public class PlayerAimSight : MonoBehaviour
+public class PlayerAimsight : MonoBehaviour
 {
     [SerializeField] Transform _period;
     [SerializeField] Color _enemyOverlapColor;
@@ -27,7 +27,7 @@ public class PlayerAimSight : MonoBehaviour
 
     public void SetPos(Vector3 pos) => _transform.position = Camera.main.WorldToScreenPoint(pos);
     public void SetDontOverlapColor() => _image.color = _dontOverlapColor;
-    
+
     public void SetDefaultColor()
     {
         _image.color = _defaultColor;

@@ -11,7 +11,7 @@ public class InGameStateLineModule
 {
     static readonly string[] InGameStartLines =
     {
-        "「アイテムを集めて脱出してね」",
+        "「好きなだけ敵を倒して脱出してね」",
         "「しばらくしたら脱出用のヘリコプターが来るよ」",
         "「頑張れ(∩´∀｀)∩」",
     };

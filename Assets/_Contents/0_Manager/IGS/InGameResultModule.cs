@@ -10,6 +10,11 @@ using UnityEngine.EventSystems;
 [System.Serializable]
 public class InGameResultModule
 {
+    /// <summary>
+    /// ボタンをクリックした際の演出用の時間、適当
+    /// </summary>
+    static readonly float OnClickDelay = 0.5f;
+
     [SerializeField] Transform _resultUIRoot;
     [Header("タイトルに戻るボタン")]
     [SerializeField] Button _resultButton;
@@ -35,5 +40,8 @@ public class InGameResultModule
 
         AsyncUnityEventHandler eventHandler = _resultButton.onClick.GetAsyncEventHandler(token);
         await eventHandler.OnInvokeAsync();
+
+        GameManager.Instance.AudioModule.PlaySE(AudioType.SE_ButtonSubmit);
+        await UniTask.Delay(System.TimeSpan.FromSeconds(OnClickDelay), cancellationToken: token);
     }
 }

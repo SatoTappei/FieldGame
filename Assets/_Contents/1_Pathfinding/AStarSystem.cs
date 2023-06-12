@@ -54,7 +54,7 @@ public class AStarSystem : MonoBehaviour, IPathfindingSystem
     {
         if (_path != null)
         {
-            foreach(Vector3 pos in _path)
+            foreach (Vector3 pos in _path)
             {
                 Gizmos.color = Color.magenta;
                 Gizmos.DrawCube(pos, Vector3.one);
